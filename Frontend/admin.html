@@ -1,0 +1,1279 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Dashboard - StegoSecure</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        body {
+            background: #f8fafc;
+            color: #334155;
+            min-height: 100vh;
+        }
+
+        /* Header */
+        .admin-header {
+            background: white;
+            padding: 1rem 2rem;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: #4f46e5;
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .admin-info {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .logout-btn {
+            background: #ef4444;
+            color: white;
+            padding: 0.5rem 1rem;
+            border-radius: 8px;
+            border: none;
+            cursor: pointer;
+            font-weight: 500;
+        }
+
+        /* Main Content */
+        .admin-container {
+            padding: 2rem;
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        /* Navigation Tabs */
+        .admin-tabs {
+            display: flex;
+            gap: 0.5rem;
+            margin-bottom: 2rem;
+            border-bottom: 2px solid #e2e8f0;
+            padding-bottom: 0.5rem;
+        }
+
+        .tab-btn {
+            padding: 0.75rem 1.5rem;
+            background: none;
+            border: none;
+            border-radius: 8px 8px 0 0;
+            cursor: pointer;
+            font-weight: 500;
+            color: #64748b;
+        }
+
+        .tab-btn.active {
+            background: #4f46e5;
+            color: white;
+        }
+
+        /* Tab Content */
+        .tab-content {
+            display: none;
+            background: white;
+            border-radius: 12px;
+            padding: 1.5rem;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+        }
+
+        .tab-content.active {
+            display: block;
+        }
+
+        .section-title {
+            font-size: 1.25rem;
+            color: #1e293b;
+            margin-bottom: 1.5rem;
+            padding-bottom: 0.75rem;
+            border-bottom: 2px solid #f1f5f9;
+        }
+
+        /* Search Bar */
+        .search-container {
+            background: #f8fafc;
+            padding: 1rem;
+            border-radius: 8px;
+            margin-bottom: 1.5rem;
+            display: flex;
+            gap: 1rem;
+            align-items: center;
+        }
+
+        .search-input {
+            flex: 1;
+            padding: 0.75rem 1rem;
+            border: 2px solid #e2e8f0;
+            border-radius: 8px;
+            font-size: 0.95rem;
+        }
+
+        .search-input:focus {
+            outline: none;
+            border-color: #4f46e5;
+        }
+
+        .search-btn {
+            background: #4f46e5;
+            color: white;
+            padding: 0.75rem 1.5rem;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 500;
+        }
+
+        .clear-search-btn {
+            background: #94a3b8;
+            color: white;
+            padding: 0.75rem 1.5rem;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 500;
+        }
+
+        /* Tables */
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 1rem;
+        }
+
+        th {
+            background: #f1f5f9;
+            padding: 1rem;
+            text-align: left;
+            font-weight: 600;
+            color: #475569;
+        }
+
+        td {
+            padding: 1rem;
+            border-bottom: 1px solid #e2e8f0;
+        }
+
+        tr:hover {
+            background: #f8fafc;
+        }
+
+        .highlight-row {
+            background: #fef3c7 !important;
+            animation: highlight-pulse 1.5s ease-in-out;
+        }
+
+        @keyframes highlight-pulse {
+            0% { background-color: #fef3c7; }
+            50% { background-color: #fde68a; }
+            100% { background-color: #fef3c7; }
+        }
+
+        /* Buttons */
+        .btn {
+            padding: 0.5rem 1rem;
+            border-radius: 6px;
+            border: none;
+            cursor: pointer;
+            font-weight: 500;
+            font-size: 0.9rem;
+        }
+
+        .btn-primary {
+            background: #4f46e5;
+            color: white;
+        }
+
+        .btn-danger {
+            background: #ef4444;
+            color: white;
+        }
+
+        .btn-success {
+            background: #10b981;
+            color: white;
+        }
+
+        .btn-small {
+            padding: 0.25rem 0.75rem;
+            font-size: 0.8rem;
+        }
+
+        /* Inputs */
+        .input-field {
+            padding: 0.5rem;
+            border: 2px solid #e2e8f0;
+            border-radius: 6px;
+            width: 150px;
+        }
+
+        .input-field:focus {
+            outline: none;
+            border-color: #4f46e5;
+        }
+
+        /* Stats Cards */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1rem;
+            margin-bottom: 2rem;
+        }
+
+        .stat-card {
+            background: white;
+            padding: 1.5rem;
+            border-radius: 12px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        .stat-value {
+            font-size: 2rem;
+            font-weight: 700;
+            color: #4f46e5;
+        }
+
+        .stat-label {
+            color: #64748b;
+            font-size: 0.9rem;
+            margin-top: 0.5rem;
+        }
+
+        /* Messages */
+        .message {
+            padding: 1rem;
+            border-radius: 8px;
+            margin: 1rem 0;
+            display: none;
+        }
+
+        .message.success {
+            background: #d1fae5;
+            color: #065f46;
+            border: 1px solid #a7f3d0;
+            display: block;
+        }
+
+        .message.error {
+            background: #fee2e2;
+            color: #991b1b;
+            border: 1px solid #fecaca;
+            display: block;
+        }
+
+        /* Modal */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.5);
+            z-index: 1000;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .modal-content {
+            background: white;
+            padding: 2rem;
+            border-radius: 12px;
+            min-width: 400px;
+            max-width: 500px;
+        }
+
+        .modal-title {
+            margin-bottom: 1.5rem;
+            color: #1e293b;
+        }
+
+        .modal-actions {
+            display: flex;
+            gap: 1rem;
+            margin-top: 1.5rem;
+            justify-content: flex-end;
+        }
+    </style>
+</head>
+<body>
+    <!-- Header -->
+    <header class="admin-header">
+        <div class="logo">
+            <span>🔐</span>
+            <span>StegoSecure Admin</span>
+        </div>
+        <div class="admin-info">
+            <span id="adminUsername">Admin</span>
+            <button class="logout-btn" id="logoutBtn">Logout</button>
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <div class="admin-container">
+        <!-- Navigation Tabs -->
+        <div class="admin-tabs">
+            <button class="tab-btn active" data-tab="dashboard">📊 Dashboard</button>
+            <button class="tab-btn" data-tab="users">👥 Users</button>
+            <button class="tab-btn" data-tab="payments">💰 Payments</button>
+            <button class="tab-btn" data-tab="plans">📋 Plans</button>
+            <button class="tab-btn" data-tab="settings">⚙️ Settings</button>
+        </div>
+
+        <!-- Dashboard Tab -->
+        <div id="dashboard" class="tab-content active">
+            <h2 class="section-title">System Overview</h2>
+            
+            <!-- Stats -->
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <div class="stat-value" id="totalUsers">0</div>
+                    <div class="stat-label">Total Users</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-value" id="totalPayments">0</div>
+                    <div class="stat-label">Total Payments</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-value" id="totalRevenue">₹0</div>
+                    <div class="stat-label">Total Revenue</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-value" id="activeUsers">0</div>
+                    <div class="stat-label">Active Users (Last 30 days)</div>
+                </div>
+            </div>
+
+            <!-- Recent Activity -->
+            <h3 class="section-title">Recent Payments</h3>
+            <table>
+                <thead>
+                    <tr>
+                        <th>User</th>
+                        <th>Amount</th>
+                        <th>Plan</th>
+                        <th>Date</th>
+                        <th>Status</th>
+                        <th>Payment ID</th>
+                    </tr>
+                </thead>
+                <tbody id="recentPayments">
+                    <!-- Loaded dynamically -->
+                </tbody>
+            </table>
+        </div>
+
+        <!-- Users Tab -->
+        <div id="users" class="tab-content">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem;">
+                <h2 class="section-title">User Management</h2>
+                <button class="btn btn-primary" id="refreshUsersBtn">🔄 Refresh</button>
+            </div>
+            
+            <!-- Search Bar -->
+            <div class="search-container">
+                <input type="text" id="userSearchInput" class="search-input" placeholder="Search by ID, Username, or Email...">
+                <button class="search-btn" id="searchUsersBtn">Search</button>
+                <button class="clear-search-btn" id="clearUserSearchBtn">Clear</button>
+            </div>
+            
+            <table>
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>Username</th>
+                        <th>Email</th>
+                        <th>Encryptions Left</th>
+                        <th>Joined Date</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody id="usersTable">
+                    <!-- Loaded dynamically -->
+                </tbody>
+            </table>
+            
+            <div id="noUsersMessage" style="text-align: center; padding: 2rem; color: #64748b; display: none;">
+                No users found
+            </div>
+        </div>
+
+        <!-- Payments Tab -->
+        <div id="payments" class="tab-content">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem;">
+                <h2 class="section-title">Payment History</h2>
+                <button class="btn btn-primary" id="refreshPaymentsBtn">🔄 Refresh</button>
+            </div>
+            
+            <!-- Search Bar -->
+            <div class="search-container">
+                <input type="text" id="paymentSearchInput" class="search-input" placeholder="Search by Payment ID, User ID, or Username...">
+                <button class="search-btn" id="searchPaymentsBtn">Search</button>
+                <button class="clear-search-btn" id="clearPaymentSearchBtn">Clear</button>
+            </div>
+            
+            <table>
+                <thead>
+                    <tr>
+                        <th>Payment ID</th>
+                        <th>User</th>
+                        <th>Amount</th>
+                        <th>Plan</th>
+                        <th>Encryptions</th>
+                        <th>Date</th>
+                        <th>Status</th>
+                    </tr>
+                </thead>
+                <tbody id="paymentsTable">
+                    <!-- Loaded dynamically -->
+                </tbody>
+            </table>
+            
+            <div id="noPaymentsMessage" style="text-align: center; padding: 2rem; color: #64748b; display: none;">
+                No payments found
+            </div>
+        </div>
+
+        <!-- Plans Tab -->
+        <div id="plans" class="tab-content">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem;">
+                <h2 class="section-title">Plan Management</h2>
+                <button class="btn btn-primary" id="refreshPlansBtn">🔄 Refresh</button>
+            </div>
+            
+            <table>
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>Plan Name</th>
+                        <th>Price (₹)</th>
+                        <th>Encryptions</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody id="plansTable">
+                    <!-- Loaded dynamically -->
+                </tbody>
+            </table>
+        </div>
+
+        <!-- Settings Tab -->
+        <!-- Settings Tab -->
+<div id="settings" class="tab-content">
+    <h2 class="section-title">System Settings</h2>
+    
+    <!-- Current Admin Info -->
+    <div style="background: #f8fafc; padding: 1.5rem; border-radius: 12px; margin-bottom: 1.5rem;">
+        <h3 style="margin-bottom: 1rem;">👤 Current Admin</h3>
+        <p style="color: #64748b;">
+            Logged in as: <strong id="currentAdminDisplay"></strong>
+        </p>
+    </div>
+    
+    <!-- Default Encryption Limit -->
+    <div style="background: #f8fafc; padding: 1.5rem; border-radius: 12px; margin-bottom: 1.5rem;">
+        <h3 style="margin-bottom: 1rem;">🔒 Default Encryption Limit</h3>
+        <p style="color: #64748b; margin-bottom: 1rem;">
+            This limit applies to new users upon registration.
+        </p>
+        
+        <div style="display: flex; align-items: center; gap: 1rem; margin-bottom: 1rem;">
+            <div style="flex: 1;">
+                <label style="display: block; margin-bottom: 0.5rem; font-weight: 500;">Current Limit:</label>
+                <div style="font-size: 1.5rem; font-weight: 700; color: #4f46e5;" id="currentDefaultLimitDisplay">
+                    Loading...
+                </div>
+            </div>
+            <button class="btn btn-primary" id="changeLimitBtn">Change Limit</button>
+        </div>
+        
+        <!-- Hidden input for current limit (optional) -->
+        <input type="hidden" id="defaultLimitInput">
+    </div>
+</div>
+    </div>
+
+    <!-- Modals -->
+    <!-- Edit User Limit Modal -->
+    <div class="modal" id="editLimitModal">
+        <div class="modal-content">
+            <h3 class="modal-title">Edit User Encryption Limit</h3>
+            <div>
+                <p>User: <strong id="editUserName">-</strong></p>
+                <p>Current Limit: <strong id="currentUserLimit">0</strong></p>
+            </div>
+            <div style="margin-top: 1rem;">
+                <label style="display: block; margin-bottom: 0.5rem;">New Limit:</label>
+                <input type="number" id="newLimitInput" class="input-field" style="width: 100%;" min="0">
+            </div>
+            <div class="modal-actions">
+                <button class="btn" id="cancelEditBtn">Cancel</button>
+                <button class="btn btn-success" id="saveLimitBtn">Save</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Edit Plan Modal -->
+    <div class="modal" id="editPlanModal">
+        <div class="modal-content">
+            <h3 class="modal-title">Edit Plan</h3>
+            <div style="margin-top: 1rem;">
+                <label style="display: block; margin-bottom: 0.5rem;">Plan Name:</label>
+                <input type="text" id="editPlanName" class="input-field" style="width: 100%;" disabled>
+            </div>
+            <div style="margin-top: 1rem;">
+                <label style="display: block; margin-bottom: 0.5rem;">Price (₹):</label>
+                <input type="number" id="editPlanPrice" class="input-field" style="width: 100%;" min="0">
+            </div>
+            <div style="margin-top: 1rem;">
+                <label style="display: block; margin-bottom: 0.5rem;">Encryptions:</label>
+                <input type="number" id="editPlanEncryptions" class="input-field" style="width: 100%;" min="1">
+            </div>
+            <div class="modal-actions">
+                <button class="btn" id="cancelPlanEditBtn">Cancel</button>
+                <button class="btn btn-success" id="savePlanBtn">Save</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Messages Area -->
+    <div id="adminMessage" class="message"></div>
+
+        <!-- Password Verification Modal -->
+<div class="modal" id="passwordModal">
+    <div class="modal-content">
+        <h3 class="modal-title">🔒 Verify Admin Password</h3>
+        <div style="margin-bottom: 1rem;">
+            <p>Admin: <strong id="verifyingAdminName">-</strong></p>
+        </div>
+        <div style="margin-top: 1rem;">
+            <label style="display: block; margin-bottom: 0.5rem; font-weight: 500;">Enter Password:</label>
+            <input type="password" id="adminPasswordInput" class="input-field" style="width: 100%;" placeholder="Your admin password">
+        </div>
+        <div style="margin-top: 1rem;">
+            <label style="display: block; margin-bottom: 0.5rem; font-weight: 500;">New Default Limit:</label>
+            <input type="number" id="newDefaultLimitInput" class="input-field" style="width: 100%;" min="0" placeholder="Enter new limit">
+        </div>
+        <div id="passwordError" style="color: #ef4444; margin-top: 1rem; display: none;">
+            ❌ Incorrect password
+        </div>
+        <div class="modal-actions">
+            <button class="btn" id="cancelPasswordBtn">Cancel</button>
+            <button class="btn btn-success" id="confirmPasswordBtn">Verify & Update</button>
+        </div>
+    </div>
+</div>
+
+    <script>
+        // Configuration
+        const backendBaseUrl = 'http://localhost:5000';
+        let currentAdminId = localStorage.getItem('admin_id');
+        let currentAdminUsername = localStorage.getItem('admin_username');
+        let selectedUserId = null;
+        let selectedPlanId = null;
+        
+        // Search state
+        let userSearchQuery = '';
+        let paymentSearchQuery = '';
+
+        // DOM Elements
+        const adminUsername = document.getElementById('adminUsername');
+        const logoutBtn = document.getElementById('logoutBtn');
+        const tabBtns = document.querySelectorAll('.tab-btn');
+        const tabContents = document.querySelectorAll('.tab-content');
+        const adminMessage = document.getElementById('adminMessage');
+
+        // Dashboard Elements
+        const totalUsers = document.getElementById('totalUsers');
+        const totalPayments = document.getElementById('totalPayments');
+        const totalRevenue = document.getElementById('totalRevenue');
+        const activeUsers = document.getElementById('activeUsers');
+        const recentPayments = document.getElementById('recentPayments');
+
+        // Users Tab
+        const refreshUsersBtn = document.getElementById('refreshUsersBtn');
+        const usersTable = document.getElementById('usersTable');
+        const userSearchInput = document.getElementById('userSearchInput');
+        const searchUsersBtn = document.getElementById('searchUsersBtn');
+        const clearUserSearchBtn = document.getElementById('clearUserSearchBtn');
+        const noUsersMessage = document.getElementById('noUsersMessage');
+
+        // Payments Tab
+        const refreshPaymentsBtn = document.getElementById('refreshPaymentsBtn');
+        const paymentsTable = document.getElementById('paymentsTable');
+        const paymentSearchInput = document.getElementById('paymentSearchInput');
+        const searchPaymentsBtn = document.getElementById('searchPaymentsBtn');
+        const clearPaymentSearchBtn = document.getElementById('clearPaymentSearchBtn');
+        const noPaymentsMessage = document.getElementById('noPaymentsMessage');
+
+        // Plans Tab
+        const refreshPlansBtn = document.getElementById('refreshPlansBtn');
+        const plansTable = document.getElementById('plansTable');
+
+        // Settings Tab
+        const currentAdminDisplay = document.getElementById('currentAdminDisplay');
+const currentDefaultLimitDisplay = document.getElementById('currentDefaultLimitDisplay');
+const changeLimitBtn = document.getElementById('changeLimitBtn');
+        
+        // Password Modal Elements
+const passwordModal = document.getElementById('passwordModal');
+const verifyingAdminName = document.getElementById('verifyingAdminName');
+const adminPasswordInput = document.getElementById('adminPasswordInput');
+const newDefaultLimitInput = document.getElementById('newDefaultLimitInput');
+const passwordError = document.getElementById('passwordError');
+const cancelPasswordBtn = document.getElementById('cancelPasswordBtn');
+const confirmPasswordBtn = document.getElementById('confirmPasswordBtn');
+        // Modals
+        const editLimitModal = document.getElementById('editLimitModal');
+        const editUserName = document.getElementById('editUserName');
+        const currentUserLimit = document.getElementById('currentUserLimit');
+        const newLimitInput = document.getElementById('newLimitInput');
+        const cancelEditBtn = document.getElementById('cancelEditBtn');
+        const saveLimitBtn = document.getElementById('saveLimitBtn');
+
+        const editPlanModal = document.getElementById('editPlanModal');
+        const editPlanName = document.getElementById('editPlanName');
+        const editPlanPrice = document.getElementById('editPlanPrice');
+        const editPlanEncryptions = document.getElementById('editPlanEncryptions');
+        const cancelPlanEditBtn = document.getElementById('cancelPlanEditBtn');
+        const savePlanBtn = document.getElementById('savePlanBtn');
+
+        // Utility Functions
+        function showMessage(text, type) {
+            adminMessage.textContent = text;
+            adminMessage.className = `message ${type}`;
+            setTimeout(() => adminMessage.className = 'message', 5000);
+        }
+
+        function formatDate(dateString) {
+            if (!dateString) return 'N/A';
+            const date = new Date(dateString);
+            return date.toLocaleDateString() + ' ' + date.toLocaleTimeString();
+        }
+
+        function hideAllTabs() {
+            tabContents.forEach(tab => tab.classList.remove('active'));
+            tabBtns.forEach(btn => btn.classList.remove('active'));
+        }
+
+        function showTab(tabId) {
+            hideAllTabs();
+            document.getElementById(tabId).classList.add('active');
+            document.querySelector(`[data-tab="${tabId}"]`).classList.add('active');
+            
+            // Load data when tab is shown
+            if (tabId === 'dashboard') loadDashboard();
+            if (tabId === 'users') loadUsers();
+            if (tabId === 'payments') loadPayments();
+            if (tabId === 'plans') loadPlans();
+            if (tabId === 'settings') loadSettings();
+        }
+
+        function highlightRow(row) {
+            row.classList.add('highlight-row');
+            setTimeout(() => {
+                row.classList.remove('highlight-row');
+            }, 3000);
+            
+            // Scroll to the row
+            row.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        }
+
+        // Auth Check
+        function checkAdminAuth() {
+            if (!currentAdminId || !currentAdminUsername) {
+                window.location.href = 'admin_login.html';
+                return false;
+            }
+            adminUsername.textContent = currentAdminUsername;
+            return true;
+        }
+        
+        // Dashboard Functions
+        async function loadDashboard() {
+            try {
+                // Load users count
+                const usersRes = await fetch(`${backendBaseUrl}/admin/users`);
+                const usersData = await usersRes.json();
+                const users = usersData.users || [];
+                totalUsers.textContent = users.length;
+
+                // Load payments data
+                const paymentsRes = await fetch(`${backendBaseUrl}/admin/payments`);
+                const paymentsData = await paymentsRes.json();
+                
+                const payments = paymentsData.payments || [];
+                totalPayments.textContent = payments.length;
+                
+                // Calculate total revenue from SUCCESS payments only
+                const revenue = payments
+                    .filter(p => p.status === 'SUCCESS')
+                    .reduce((sum, payment) => sum + (parseFloat(payment.amount) || 0), 0);
+                totalRevenue.textContent = `₹${revenue.toFixed(2)}`;
+
+                // Calculate active users (users with payments in last 30 days)
+                const thirtyDaysAgo = new Date();
+                thirtyDaysAgo.setDate(thirtyDaysAgo.getDate() - 30);
+                
+                const activeUserIds = new Set();
+                payments.forEach(payment => {
+                    const paymentDate = new Date(payment.created_at);
+                    if (paymentDate >= thirtyDaysAgo) {
+                        activeUserIds.add(payment.user_id);
+                    }
+                });
+                activeUsers.textContent = activeUserIds.size;
+
+                // Load recent payments (last 5)
+                recentPayments.innerHTML = '';
+                const recent = payments.slice(0, 5);
+                recent.forEach(payment => {
+                    const row = document.createElement('tr');
+                    row.innerHTML = `
+                        <td>${payment.username || 'Unknown'}</td>
+                        <td>₹${payment.amount || 0}</td>
+                        <td>${payment.plan_name || 'N/A'}</td>
+                        <td>${formatDate(payment.created_at)}</td>
+                        <td>
+                            <span style="
+                                background: ${payment.status === 'SUCCESS' ? '#d1fae5' : '#fee2e2'}; 
+                                color: ${payment.status === 'SUCCESS' ? '#065f46' : '#991b1b'}; 
+                                padding: 0.25rem 0.75rem; 
+                                border-radius: 20px; 
+                                font-size: 0.85rem;
+                            ">
+                                ${payment.status || 'PENDING'}
+                            </span>
+                        </td>
+                        <td style="font-family: monospace; font-size: 0.85rem;">
+                            ${payment.payment_id || 'N/A'}
+                        </td>
+                    `;
+                    recentPayments.appendChild(row);
+                });
+
+            } catch (error) {
+                console.error('Error loading dashboard:', error);
+                showMessage('Failed to load dashboard data', 'error');
+            }
+        }
+
+        // Users Management with Search
+        async function loadUsers() {
+            try {
+                const response = await fetch(`${backendBaseUrl}/admin/users`);
+                const data = await response.json();
+                
+                usersTable.innerHTML = '';
+                let filteredUsers = data.users || [];
+                
+                // Apply search filter
+                if (userSearchQuery) {
+                    const query = userSearchQuery.toLowerCase();
+                    filteredUsers = filteredUsers.filter(user => 
+                        user.id.toString().includes(query) ||
+                        (user.username && user.username.toLowerCase().includes(query)) ||
+                        (user.email && user.email.toLowerCase().includes(query))
+                    );
+                }
+                
+                if (filteredUsers.length === 0) {
+                    noUsersMessage.style.display = 'block';
+                    usersTable.innerHTML = '';
+                } else {
+                    noUsersMessage.style.display = 'none';
+                    
+                    filteredUsers.forEach(user => {
+                        const row = document.createElement('tr');
+                        row.id = `user-row-${user.id}`;
+                        row.innerHTML = `
+                            <td>${user.id}</td>
+                            <td>${user.username}</td>
+                            <td>${user.email}</td>
+                            <td>${user.remaining_attempts}</td>
+                            <td>${formatDate(user.created_at)}</td>
+                            <td>
+                                <button class="btn btn-primary btn-small" onclick="openEditLimitModal(${user.id}, '${user.username}', ${user.remaining_attempts})">
+                                    Edit Limit
+                                </button>
+                            </td>
+                        `;
+                        usersTable.appendChild(row);
+                    });
+                }
+                
+            } catch (error) {
+                console.error('Error loading users:', error);
+                showMessage('Failed to load users', 'error');
+            }
+        }
+
+        // Payments Management with Search
+        async function loadPayments() {
+            try {
+                const response = await fetch(`${backendBaseUrl}/admin/payments`);
+                const data = await response.json();
+                
+                paymentsTable.innerHTML = '';
+                let filteredPayments = data.payments || [];
+                
+                // Apply search filter
+                if (paymentSearchQuery) {
+                    const query = paymentSearchQuery.toLowerCase();
+                    filteredPayments = filteredPayments.filter(payment => 
+                        (payment.payment_id && payment.payment_id.toLowerCase().includes(query)) ||
+                        payment.user_id.toString().includes(query) ||
+                        (payment.username && payment.username.toLowerCase().includes(query))
+                    );
+                }
+                
+                if (filteredPayments.length === 0) {
+                    noPaymentsMessage.style.display = 'block';
+                    paymentsTable.innerHTML = '';
+                } else {
+                    noPaymentsMessage.style.display = 'none';
+                    
+                    filteredPayments.forEach(payment => {
+                        const row = document.createElement('tr');
+                        row.id = `payment-row-${payment.payment_id || payment.id}`;
+                        row.innerHTML = `
+                            <td style="font-family: monospace; font-size: 0.9rem;">
+                                ${payment.payment_id || 'N/A'}
+                            </td>
+                            <td>${payment.username} (ID: ${payment.user_id})</td>
+                            <td>₹${payment.amount}</td>
+                            <td>${payment.plan_name}</td>
+                            <td>${payment.encryptions}</td>
+                            <td>${formatDate(payment.created_at)}</td>
+                            <td>
+                                <span style="
+                                    background: ${payment.status === 'SUCCESS' ? '#d1fae5' : '#fee2e2'}; 
+                                    color: ${payment.status === 'SUCCESS' ? '#065f46' : '#991b1b'}; 
+                                    padding: 0.25rem 0.75rem; 
+                                    border-radius: 20px; 
+                                    font-size: 0.85rem;
+                                ">
+                                    ${payment.status}
+                                </span>
+                            </td>
+                        `;
+                        paymentsTable.appendChild(row);
+                    });
+                }
+                
+            } catch (error) {
+                console.error('Error loading payments:', error);
+                showMessage('Failed to load payments', 'error');
+            }
+        }
+
+        // Plans Management
+        async function loadPlans() {
+            try {
+                const response = await fetch(`${backendBaseUrl}/plans`);
+                const data = await response.json();
+                
+                plansTable.innerHTML = '';
+                
+                data.plans.forEach(plan => {
+                    const row = document.createElement('tr');
+                    row.innerHTML = `
+                        <td>${plan.id}</td>
+                        <td>${plan.name}</td>
+                        <td>₹${plan.price}</td>
+                        <td>${plan.encryptions}</td>
+                        <td>
+                            <button class="btn btn-primary btn-small" onclick="openEditPlanModal(${plan.id}, '${plan.name}', ${plan.price}, ${plan.encryptions})">
+                                Edit
+                            </button>
+                        </td>
+                    `;
+                    plansTable.appendChild(row);
+                });
+                
+            } catch (error) {
+                console.error('Error loading plans:', error);
+                showMessage('Failed to load plans', 'error');
+            }
+        }
+
+        // Search Functions
+        function performUserSearch() {
+            userSearchQuery = userSearchInput.value.trim();
+            loadUsers();
+            
+            // If searching by ID, try to highlight the row
+            if (userSearchQuery && /^\d+$/.test(userSearchQuery)) {
+                setTimeout(() => {
+                    const row = document.getElementById(`user-row-${userSearchQuery}`);
+                    if (row) {
+                        highlightRow(row);
+                    }
+                }, 300);
+            }
+        }
+
+        function performPaymentSearch() {
+            paymentSearchQuery = paymentSearchInput.value.trim();
+            loadPayments();
+            
+            // If searching by Payment ID, try to highlight the row
+            if (paymentSearchQuery) {
+                setTimeout(() => {
+                    // Try to find by payment_id
+                    const rows = document.querySelectorAll('#paymentsTable tr');
+                    rows.forEach(row => {
+                        const paymentIdCell = row.querySelector('td:first-child');
+                        if (paymentIdCell && paymentIdCell.textContent.includes(paymentSearchQuery)) {
+                            highlightRow(row);
+                        }
+                    });
+                }, 300);
+            }
+        }
+
+        // Load settings data
+async function loadSettings() {
+    try {
+        // Display current admin
+        currentAdminDisplay.textContent = currentAdminUsername;
+        
+        // Load current default limit
+        const response = await fetch(`${backendBaseUrl}/admin/get-default-limit`);
+        if (response.ok) {
+            const data = await response.json();
+            currentDefaultLimitDisplay.textContent = data.default_limit;
+            defaultLimitInput.value = data.default_limit;
+        }
+    } catch (error) {
+        console.error('Error loading settings:', error);
+        currentDefaultLimitDisplay.textContent = 'Error loading';
+    }
+}
+
+// Open password verification modal
+function openPasswordModal() {
+    verifyingAdminName.textContent = currentAdminUsername;
+    adminPasswordInput.value = '';
+    newDefaultLimitInput.value = '';
+    passwordError.style.display = 'none';
+    passwordModal.style.display = 'flex';
+    adminPasswordInput.focus();
+}
+
+// Verify admin password and update limit
+async function verifyAndUpdateLimit() {
+    const password = adminPasswordInput.value.trim();
+    const newLimit = parseInt(newDefaultLimitInput.value);
+    
+    if (!password) {
+        passwordError.textContent = 'Please enter password';
+        passwordError.style.display = 'block';
+        return;
+    }
+    
+    if (isNaN(newLimit) || newLimit < 0) {
+        passwordError.textContent = 'Please enter a valid limit number';
+        passwordError.style.display = 'block';
+        return;
+    }
+    
+    try {
+        // First verify admin password
+        const verifyResponse = await fetch(`${backendBaseUrl}/admin/login`, {
+            method: 'POST',
+            headers: {'Content-Type': 'application/json'},
+            body: JSON.stringify({
+                username: currentAdminUsername,
+                password: password
+            })
+        });
+        
+        if (!verifyResponse.ok) {
+            passwordError.textContent = '❌ Incorrect password';
+            passwordError.style.display = 'block';
+            adminPasswordInput.value = '';
+            adminPasswordInput.focus();
+            return;
+        }
+        
+        // If password is correct, update the default limit
+        const updateResponse = await fetch(`${backendBaseUrl}/admin/update-default-limit`, {
+            method: 'POST',
+            headers: {'Content-Type': 'application/json'},
+            body: JSON.stringify({ new_limit: newLimit })
+        });
+        
+        const updateData = await updateResponse.json();
+        
+        if (updateResponse.ok) {
+            showMessage('✅ Default limit updated successfully', 'success');
+            passwordModal.style.display = 'none';
+            
+            // Update display
+            currentDefaultLimitDisplay.textContent = newLimit;
+            defaultLimitInput.value = newLimit;
+            
+            // Clear inputs
+            adminPasswordInput.value = '';
+            newDefaultLimitInput.value = '';
+        } else {
+            showMessage(updateData.error, 'error');
+        }
+        
+    } catch (error) {
+        showMessage('Failed to update default limit', 'error');
+    }
+}
+
+        // Modal Functions
+        window.openEditLimitModal = function(userId, username, currentLimit) {
+            selectedUserId = userId;
+            editUserName.textContent = username;
+            currentUserLimit.textContent = currentLimit;
+            newLimitInput.value = currentLimit;
+            editLimitModal.style.display = 'flex';
+        }
+
+        window.openEditPlanModal = function(planId, planName, price, encryptions) {
+            selectedPlanId = planId;
+            editPlanName.value = planName;
+            editPlanPrice.value = price;
+            editPlanEncryptions.value = encryptions;
+            editPlanModal.style.display = 'flex';
+        }
+
+        // Event Listeners
+        tabBtns.forEach(btn => {
+            btn.addEventListener('click', () => {
+                showTab(btn.dataset.tab);
+            });
+        });
+
+        refreshUsersBtn.addEventListener('click', loadUsers);
+        refreshPaymentsBtn.addEventListener('click', loadPayments);
+        refreshPlansBtn.addEventListener('click', loadPlans);
+
+        // User Search
+        searchUsersBtn.addEventListener('click', performUserSearch);
+        userSearchInput.addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') performUserSearch();
+        });
+        clearUserSearchBtn.addEventListener('click', () => {
+            userSearchInput.value = '';
+            userSearchQuery = '';
+            loadUsers();
+        });
+
+        // Payment Search
+        searchPaymentsBtn.addEventListener('click', performPaymentSearch);
+        paymentSearchInput.addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') performPaymentSearch();
+        });
+        clearPaymentSearchBtn.addEventListener('click', () => {
+            paymentSearchInput.value = '';
+            paymentSearchQuery = '';
+            loadPayments();
+        });
+/**
+        // Update Default Limit
+        updateDefaultLimitBtn.addEventListener('click', async () => {
+            const newLimit = parseInt(defaultLimitInput.value);
+            if (isNaN(newLimit) || newLimit < 0) {
+                showMessage('Please enter a valid number', 'error');
+                return;
+            }
+
+            try {
+                const response = await fetch(`${backendBaseUrl}/admin/update-default-limit`, {
+                    method: 'POST',
+                    headers: {'Content-Type': 'application/json'},
+                    body: JSON.stringify({ new_limit: newLimit })
+                });
+
+                const data = await response.json();
+                if (response.ok) {
+                    showMessage(data.message, 'success');
+                } else {
+                    showMessage(data.error, 'error');
+                }
+            } catch (error) {
+                showMessage('Failed to update default limit', 'error');
+            }
+        });  
+    **/
+
+        // Save User Limit
+        saveLimitBtn.addEventListener('click', async () => {
+            const newLimit = parseInt(newLimitInput.value);
+            if (isNaN(newLimit) || newLimit < 0) {
+                showMessage('Please enter a valid number', 'error');
+                return;
+            }
+
+            try {
+                const response = await fetch(`${backendBaseUrl}/admin/update-limit`, {
+                    method: 'POST',
+                    headers: {'Content-Type': 'application/json'},
+                    body: JSON.stringify({ 
+                        user_id: selectedUserId,
+                        new_limit: newLimit 
+                    })
+                });
+
+                const data = await response.json();
+                if (response.ok) {
+                    showMessage('User limit updated successfully', 'success');
+                    editLimitModal.style.display = 'none';
+                    loadUsers();
+                    loadDashboard();
+                } else {
+                    showMessage(data.error, 'error');
+                }
+            } catch (error) {
+                showMessage('Failed to update user limit', 'error');
+            }
+        });
+
+        // Save Plan
+        savePlanBtn.addEventListener('click', async () => {
+            const price = parseInt(editPlanPrice.value);
+            const encryptions = parseInt(editPlanEncryptions.value);
+            
+            if (isNaN(price) || price < 0 || isNaN(encryptions) || encryptions < 1) {
+                showMessage('Please enter valid values', 'error');
+                return;
+            }
+
+            try {
+                const response = await fetch(`${backendBaseUrl}/admin/update-plan`, {
+                    method: 'POST',
+                    headers: {'Content-Type': 'application/json'},
+                    body: JSON.stringify({ 
+                        plan_id: selectedPlanId,
+                        price: price,
+                        encryptions: encryptions
+                    })
+                });
+
+                const data = await response.json();
+                if (response.ok) {
+                    showMessage('Plan updated successfully', 'success');
+                    editPlanModal.style.display = 'none';
+                    loadPlans();
+                } else {
+                    showMessage(data.error, 'error');
+                }
+            } catch (error) {
+                showMessage('Failed to update plan', 'error');
+            }
+        });
+
+        // Cancel buttons
+        cancelEditBtn.addEventListener('click', () => {
+            editLimitModal.style.display = 'none';
+        });
+
+        cancelPlanEditBtn.addEventListener('click', () => {
+            editPlanModal.style.display = 'none';
+        });
+
+        // Add this after your other event listeners
+document.addEventListener('DOMContentLoaded', () => {
+    if (!checkAdminAuth()) return;
+    showTab('dashboard');
+    
+    // Add event listener for change limit button
+    const changeLimitBtn = document.getElementById('changeLimitBtn');
+    if (changeLimitBtn) {
+        changeLimitBtn.addEventListener('click', openPasswordModal);
+    }
+    
+    // Add event listeners for password modal buttons
+    const cancelPasswordBtn = document.getElementById('cancelPasswordBtn');
+    const confirmPasswordBtn = document.getElementById('confirmPasswordBtn');
+    
+    if (cancelPasswordBtn) {
+        cancelPasswordBtn.addEventListener('click', () => {
+            passwordModal.style.display = 'none';
+        });
+    }
+    
+    if (confirmPasswordBtn) {
+        confirmPasswordBtn.addEventListener('click', verifyAndUpdateLimit);
+    }
+    
+    // Close password modal when clicking outside
+    window.addEventListener('click', (e) => {
+        if (e.target === passwordModal) {
+            passwordModal.style.display = 'none';
+        }
+    });
+});
+
+        // Close modals when clicking outside
+        window.addEventListener('click', (e) => {
+            if (e.target === editLimitModal) {
+                editLimitModal.style.display = 'none';
+            }
+            if (e.target === editPlanModal) {
+                editPlanModal.style.display = 'none';
+            }
+        });
+
+        // Logout
+        logoutBtn.addEventListener('click', () => {
+            localStorage.removeItem('admin_id');
+            localStorage.removeItem('admin_username');
+            window.location.href = 'admin_login.html';
+        });
+
+        // Initialize
+        document.addEventListener('DOMContentLoaded', () => {
+            if (!checkAdminAuth()) return;
+            showTab('dashboard');
+        });
+
+    </script>
+    <!-- Password Verification Modal -->
+<div class="modal" id="passwordModal">
+    <div class="modal-content">
+        <h3 class="modal-title">🔒 Verify Admin Password</h3>
+        <div style="margin-bottom: 1rem;">
+            <p>Admin: <strong id="verifyingAdminName">-</strong></p>
+        </div>
+        <div style="margin-top: 1rem;">
+            <label style="display: block; margin-bottom: 0.5rem; font-weight: 500;">Enter Password:</label>
+            <input type="password" id="adminPasswordInput" class="input-field" style="width: 100%;" placeholder="Your admin password">
+        </div>
+        <div style="margin-top: 1rem;">
+            <label style="display: block; margin-bottom: 0.5rem; font-weight: 500;">New Default Limit:</label>
+            <input type="number" id="newDefaultLimitInput" class="input-field" style="width: 100%;" min="0" placeholder="Enter new limit">
+        </div>
+        <div id="passwordError" style="color: #ef4444; margin-top: 1rem; display: none;">
+            ❌ Incorrect password
+        </div>
+        <div class="modal-actions">
+            <button class="btn" id="cancelPasswordBtn">Cancel</button>
+            <button class="btn btn-success" id="confirmPasswordBtn">Verify & Update</button>
+        </div>
+    </div>
+</div>
+</body>
+</html>

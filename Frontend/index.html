@@ -1,0 +1,2123 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>StegoSecure - Dashboard</title>
+    <style>
+        /* ===== BASE STYLES ===== */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        body {
+            background: #f8fafc;
+            color: #334155;
+            min-height: 100vh;
+            overflow-x: hidden;
+        }
+
+        /* ===== NAVBAR ===== */
+        .navbar {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            background: white;
+            padding: 1rem 2rem;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            z-index: 1000;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: #4f46e5;
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 1.5rem;
+            align-items: center;
+        }
+
+        .nav-link {
+            color: #4b5563;
+            text-decoration: none;
+            font-weight: 500;
+            padding: 0.5rem 1rem;
+            border-radius: 8px;
+            transition: all 0.3s;
+            cursor: pointer;
+        }
+
+        .nav-link:hover {
+            color: #4f46e5;
+            background: rgba(79, 70, 229, 0.1);
+        }
+
+        .nav-link.active {
+            background: #4f46e5;
+            color: white;
+        }
+
+        .user-dropdown {
+            position: relative;
+            display: inline-block;
+        }
+
+        .user-btn {
+            background: #f1f5f9;
+            color: #4b5563;
+            padding: 0.5rem 1rem;
+            border-radius: 8px;
+            font-weight: 500;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            border: none;
+            transition: all 0.3s;
+        }
+
+        .dropdown-content {
+            display: none;
+            position: absolute;
+            right: 0;
+            top: 100%;
+            background: white;
+            min-width: 200px;
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+            border-radius: 12px;
+            padding: 1rem;
+            z-index: 1001;
+            margin-top: 5px;
+        }
+
+        .dropdown-content.show {
+            display: block;
+        }
+
+        .user-info {
+            padding: 0.5rem;
+            border-bottom: 1px solid #f1f5f9;
+            margin-bottom: 0.5rem;
+        }
+
+        .logout-btn {
+            background: #ef4444;
+            color: white;
+            padding: 0.75rem;
+            border-radius: 8px;
+            font-weight: 500;
+            transition: all 0.3s;
+            cursor: pointer;
+            border: none;
+            width: 100%;
+            text-align: center;
+            margin-top: 0.5rem;
+        }
+
+        /* ===== MAIN CONTENT ===== */
+        .main-container {
+        
+            padding: 2rem;
+            max-width: 1200px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        .section {
+            display: none;
+            background: white;
+            border-radius: 16px;
+            padding: 2rem;
+            margin-bottom: 2rem;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+        }
+
+        .section.active {
+            display: block;
+        }
+
+        .section-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 2rem;
+            padding-bottom: 1rem;
+            border-bottom: 2px solid #f1f5f9;
+        }
+
+        .section-title {
+            font-size: 1.5rem;
+            color: #1e293b;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        /* ===== ENCRYPTION SECTION ===== */
+        .encryption-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 1.5rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .encryption-step {
+            background: #f8fafc;
+            padding: 1.5rem;
+            border-radius: 12px;
+            border: 2px solid #e2e8f0;
+        }
+
+        .step-number {
+            display: inline-block;
+            width: 30px;
+            height: 30px;
+            background: #4f46e5;
+            color: white;
+            border-radius: 50%;
+            text-align: center;
+            line-height: 30px;
+            margin-bottom: 1rem;
+            font-weight: 600;
+        }
+
+        .step-title {
+            font-weight: 600;
+            margin-bottom: 1rem;
+            color: #1e293b;
+        }
+
+        /* File Upload */
+        .file-upload {
+            border: 2px dashed #cbd5e1;
+            border-radius: 12px;
+            padding: 1rem;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s;
+            min-height: 150px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .file-upload:hover {
+            border-color: #4f46e5;
+        }
+
+        .upload-icon {
+            font-size: 2.5rem;
+            color: #94a3b8;
+            margin-bottom: 0.5rem;
+            display: block;
+        }
+
+        .image-preview {
+            max-width: 100%;
+            max-height: 120px;
+            border-radius: 8px;
+            margin-bottom: 0.5rem;
+            display: none;
+        }
+
+        .file-name {
+            font-size: 0.85rem;
+            color: #64748b;
+            word-break: break-all;
+            text-align: center;
+        }
+
+        /* Payload Options */
+        .payload-options {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 0.5rem;
+        }
+
+        .payload-option {
+            padding: 0.75rem;
+            border: 2px solid #e2e8f0;
+            border-radius: 8px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s;
+            font-size: 0.85rem;
+        }
+
+        .payload-option.selected {
+            background: #4f46e5;
+            color: white;
+            border-color: #4f46e5;
+        }
+
+        /* Authentication */
+        .auth-method {
+            display: flex;
+            gap: 0.5rem;
+            margin-bottom: 1rem;
+        }
+
+        .auth-btn {
+            flex: 1;
+            padding: 0.75rem;
+            border: 2px solid #e2e8f0;
+            border-radius: 8px;
+            background: white;
+            cursor: pointer;
+            font-weight: 500;
+        }
+
+        .auth-btn.selected {
+            background: #4f46e5;
+            color: white;
+            border-color: #4f46e5;
+        }
+
+        .generate-key-btn {
+            background: #10b981;
+            color: white;
+            border: none;
+            padding: 0.5rem 1rem;
+            border-radius: 6px;
+            cursor: pointer;
+            margin-top: 0.5rem;
+        }
+
+        /* Progress */
+        .progress-container {
+            height: 6px;
+            background: #e2e8f0;
+            border-radius: 3px;
+            margin: 1rem 0;
+            overflow: hidden;
+            display: none;
+        }
+
+        .progress-bar {
+            height: 100%;
+            background: #4f46e5;
+            width: 0%;
+            transition: width 0.3s;
+        }
+
+        /* Buttons */
+        .encrypt-btn {
+            background: #4f46e5;
+            color: white;
+            border: none;
+            padding: 1rem;
+            border-radius: 10px;
+            font-weight: 600;
+            cursor: pointer;
+            width: 100%;
+            transition: all 0.3s;
+            margin-top: 1rem;
+        }
+
+        .encrypt-btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+        /* Limit Display */
+        .limit-display {
+            background: #fef3c7;
+            color: #92400e;
+            padding: 0.5rem 1rem;
+            border-radius: 8px;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .limit-number {
+            font-size: 1.5rem;
+            font-weight: 700;
+        }
+
+        /* ===== DECRYPTION SECTION ===== */
+        .decryption-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 1.5rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .option-card {
+            padding: 1.5rem;
+            border: 2px solid #e2e8f0;
+            border-radius: 12px;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .option-card:hover {
+            border-color: #4f46e5;
+        }
+
+        .gallery-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+            gap: 1rem;
+            margin-top: 1rem;
+            max-height: 250px;
+            overflow-y: auto;
+            padding: 0.5rem;
+        }
+
+        .gallery-item {
+            border: 2px solid #e2e8f0;
+            border-radius: 10px;
+            overflow: hidden;
+            cursor: pointer;
+            height: 150px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            padding: 0.5rem;
+        }
+
+        .gallery-item:hover {
+            border-color: #4f46e5;
+        }
+
+        .gallery-emoji {
+            font-size: 2rem;
+            display: block;
+        }
+
+        .gallery-preview {
+            max-width: 100%;
+            max-height: 120px;
+            border-radius: 6px;
+            display: none;
+        }
+
+        .auth-display {
+            background: #f8fafc;
+            border-radius: 10px;
+            padding: 1rem;
+            margin-top: 1rem;
+        }
+
+        /* ===== UTILITIES ===== */
+        .input-field, .textarea-field {
+            width: 100%;
+            padding: 0.75rem;
+            border: 2px solid #e2e8f0;
+            border-radius: 8px;
+            font-size: 1rem;
+            margin-bottom: 1rem;
+        }
+
+        .input-field:focus {
+            outline: none;
+            border-color: #4f46e5;
+        }
+
+        .textarea-field {
+            min-height: 100px;
+            resize: vertical;
+        }
+
+        .btn {
+            padding: 0.75rem 1.5rem;
+            border: none;
+            border-radius: 8px;
+            font-weight: 500;
+            cursor: pointer;
+        }
+
+        .btn-primary {
+            background: #4f46e5;
+            color: white;
+        }
+
+        .message {
+            padding: 1rem;
+            border-radius: 8px;
+            margin: 1rem 0;
+            display: none;
+        }
+
+        .message.success {
+            background: #d1fae5;
+            color: #065f46;
+            border: 1px solid #a7f3d0;
+            display: block;
+        }
+
+        .message.error {
+            background: #fee2e2;
+            color: #991b1b;
+            border: 1px solid #fecaca;
+            display: block;
+        }
+
+        .hidden {
+            display: none !important;
+        }
+
+        /* ===== RESPONSIVE ===== */
+        @media (max-width: 1024px) {
+            .encryption-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+
+        @media (max-width: 768px) {
+            .encryption-grid {
+                grid-template-columns: 1fr;
+            }
+            .decryption-grid {
+                grid-template-columns: 1fr;
+            }
+            .navbar {
+                padding: 1rem;
+            }
+            .main-container {
+                padding: 1rem;
+                margin-top: 70px;
+            }
+        }
+
+        /* Loading animations */
+        .loading {
+            position: relative;
+            overflow: hidden;
+        }
+
+        .loading::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, 
+                transparent, 
+                rgba(255, 255, 255, 0.4), 
+                transparent);
+            animation: loading-shimmer 1.5s infinite;
+        }
+
+        @keyframes loading-shimmer {
+            0% { left: -100%; }
+            100% { left: 100%; }
+        }
+
+        .progress-container {
+            height: 4px;
+            background: #e2e8f0;
+            border-radius: 2px;
+            margin: 10px 0;
+            overflow: hidden;
+            display: none;
+        }
+
+        .progress-bar {
+            height: 100%;
+            background: linear-gradient(90deg, #4f46e5, #8b5cf6);
+            width: 0%;
+            transition: width 0.3s ease;
+        }
+
+        .spinner {
+            display: inline-block;
+            width: 20px;
+            height: 20px;
+            border: 3px solid #e2e8f0;
+            border-top: 3px solid #4f46e5;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin-right: 8px;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        /* Table styles */
+        .table-preview {
+            max-width: 50px;
+            max-height: 50px;
+            border-radius: 6px;
+            display: none;
+        }
+
+        .table-emoji {
+            font-size: 1.5rem;
+            display: block;
+        }
+
+        .hero-banner {
+    width: 100vw;  /* 🔥 full screen width */
+    margin-left: calc(-50vw + 50%); /* 🔥 center properly */
+
+    height: 25vw;
+    max-height: 400px;
+
+    margin-top: 70px;
+    margin-bottom: 0rem;
+
+    background: 
+        linear-gradient(rgba(0, 0, 0, 0.25), rgba(0, 0, 0, 0.25)),
+        url('banner.png') center/contain no-repeat;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+}
+
+.hero-content {
+    max-width: 900px;
+    padding: 1rem;
+}
+
+.hero-content h2 {
+    font-size: 2.6rem;   /* bigger */
+    font-weight: 800;
+    margin-bottom: 0.6rem;
+    color: #6366f1;      /* pure white */
+
+    text-shadow: 
+        0 2px 10px rgba(0,0,0,0.8),
+        0 0 20px rgba(0,0,0,0.6);
+}
+
+.hero-content p {
+    color: #f1f5f9;
+    font-size: 1.3rem;
+    line-height: 1.6;
+
+    text-shadow: 
+        0 1px 6px rgba(0,0,0,0.7);
+}
+
+.hero-warning {
+    font-size: 1rem !important;
+    color: #e0e7ff;
+    margin-top: 0.6rem;
+
+    text-shadow: 
+        0 1px 4px rgba(0,0,0,0.6);
+}
+.hero-desc {
+    color: #f1f5f9;
+
+    text-shadow: 
+        0 0 6px rgba(255, 255, 255, 0.4),
+        0 0 12px rgba(79, 70, 229, 0.6);
+}
+
+.hero-banner {
+    transition: all 0.3s ease;
+}
+    </style>
+</head>
+<body>
+    <!-- Navigation Bar -->
+    <nav class="navbar">
+        <div class="logo">
+            <span>🔐</span>
+            <span>StegoSecure</span>
+        </div>
+        <div class="nav-links">
+            <a class="nav-link active" data-section="encrypt">Encrypt</a>
+            <a class="nav-link" data-section="decrypt">Decrypt</a>
+            <a class="nav-link" data-section="previous">Previous</a>
+            <a class="nav-link" data-section="plans">Plans</a>
+            <a class="nav-link" data-section="history">Purchase History</a>
+            
+            <div class="user-dropdown">
+                <button class="user-btn" id="userBtn">
+                    <span>👤</span>
+                    <span id="usernameNav">User</span>
+                </button>
+                <div class="dropdown-content" id="dropdownContent">
+                    <div class="user-info">
+                        <strong>Username:</strong>
+                        <span id="usernameDropdown">Loading...</span>
+                    </div>
+                    <div class="user-info">
+                        <strong>Email:</strong>
+                        <span id="emailDropdown">Loading...</span>
+                    </div>
+                    <div class="user-info">
+                        <strong>Remaining:</strong>
+                        <span id="limitDropdown">0</span>
+                    </div>
+                    <button class="logout-btn" id="logoutBtn">Logout</button>
+                </div>
+            </div>
+        </div>
+    </nav>
+    
+    <div class="hero-banner">
+    <div class="hero-content">
+        <h2>🔐StegoSecure</h2>
+        <p class="hero-desc"><b>
+    StegoSecure is a secure Steganography platform that allows users to hide confidential data inside images using Encryption techniques.
+</b></p>
+        <p class="hero-warning">
+            ⚠️ Login required to perform encryption and decryption
+        </p>
+    </div>
+</div>
+
+    <!-- Main Content -->
+    <div class="main-container">
+        <!-- Encryption Section -->
+        <section id="encrypt" class="section active">
+            <div class="section-header">
+                <h2 class="section-title">🔒 Encrypt Data</h2>
+                <div class="limit-display">
+                    <span class="limit-number" id="encryptLimit">0</span>
+                    <span>Remaining</span>
+                </div>
+            </div>
+
+            <div class="encryption-grid">
+                <!-- Step 1 -->
+                <div class="encryption-step">
+                    <div class="step-number">1</div>
+                    <h3 class="step-title">Cover Image</h3>
+                    <div class="file-upload" id="imageUpload">
+                        <div class="upload-icon">🖼️</div>
+                        <img class="image-preview" id="imagePreview" alt="Preview">
+                        <div class="file-name" id="imageName">Click to upload PNG/JPG</div>
+                        <input type="file" id="coverImage" accept=".png,.jpg,.jpeg" class="hidden">
+                    </div>
+                </div>
+
+                <!-- Step 2 -->
+                <div class="encryption-step">
+                    <div class="step-number">2</div>
+                    <h3 class="step-title">Choose What to Hide</h3>
+                    <div class="payload-options">
+                        <div class="payload-option selected" data-type="message">📝 Message</div>
+<div class="payload-option" data-type="file">📦 <br>File</div>
+                    </div>
+                </div>
+
+                <!-- Step 3 -->
+                <div class="encryption-step">
+                    <div class="step-number">3</div>
+                    <h3 class="step-title" id="step3Title">Enter Message to Hide</h3>
+                    <textarea id="textPayload" class="textarea-field" placeholder="Enter message..." rows="4"></textarea>
+                    <div id="filePayload" class="hidden">
+                        <div class="file-upload" id="fileUpload">
+                            <div class="upload-icon">📎</div>
+                            <div class="file-name" id="fileName">Click to upload file</div>
+                            <input type="file" id="payloadFile" class="hidden">
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Step 4 -->
+                <div class="encryption-step">
+                    <div class="step-number">4</div>
+                    <h3 class="step-title">Authentication</h3>
+                    <div class="auth-method">
+                        <button class="auth-btn selected" data-type="qa">Question</button>
+                        <button class="auth-btn" data-type="key">Key</button>
+                    </div>
+                    
+                    <div id="qaInput">
+                        <select class="input-field" id="questionSelect">
+                            <option value="pet">What is your pet's name?</option>
+                            <option value="city">In which city were you born?</option>
+                            <option value="school">What was your first school name?</option>
+                            <option value="food">What is your favorite food?</option>
+                            <option value="custom">Custom question...</option>
+                        </select>
+                        <input type="text" id="customQuestion" class="input-field hidden" placeholder="Enter custom question">
+                        <input type="text" id="answerInput" class="input-field" placeholder="Enter answer" required>
+                    </div>
+                    
+                    <div id="keyInput" class="hidden">
+                        <input type="text" id="keyInputField" class="input-field" placeholder="Enter key" required>
+                        <button class="generate-key-btn" id="generateKeyBtn">Generate Key</button>
+                    </div>
+                </div>
+
+                <!-- Step 5 -->
+                <div class="encryption-step">
+                    <div class="step-number">5</div>
+                    <h3 class="step-title">Output Name(Optional)</h3>
+                    <input type="text" id="outputName" class="input-field" placeholder="Optional output name">
+                    <p style="color: #64748b; font-size: 0.9rem;">Leave empty to use original name</p>
+                </div>
+
+                <div class="encryption-step">
+    <div class="step-number">6</div>
+    <h3 class="step-title">Size Check</h3>
+    <div id="sizeWarning" style="padding: 1rem; background: #fef3c7; border-radius: 8px; color: #92400e; font-size: 0.9rem;">
+        Select both files to check size compatibility
+    </div>
+</div>
+
+                <!-- Step 6 -->
+                <div class="encryption-step">
+                    <div class="step-number">7</div>
+                    <h3 class="step-title">Encrypt</h3>
+                    <div class="progress-container" id="encryptProgress">
+                        <div class="progress-bar" id="encryptProgressBar"></div>
+                    </div>
+                    <button class="encrypt-btn" id="encryptBtn" disabled>🔒 Start Encryption</button>
+                    
+                    <div id="encryptResult" class="hidden" style="margin-top: 1rem; text-align: center;">
+                        <div style="color: #10b981; font-weight: 600; margin-bottom: 1rem;">✅ Success!</div>
+                        <a id="downloadEncryptedBtn" class="btn btn-primary" download>⬇️ Download Image</a>
+                    </div>
+                </div>
+            </div>
+
+            <div id="encryptMessage" class="message"></div>
+        </section>
+
+        <!-- Decryption Section -->
+        <section id="decrypt" class="section">
+            <div class="section-header">
+                <h2 class="section-title">🔓 Decrypt Data</h2>
+            </div>
+
+            <div class="decryption-grid">
+                <div class="option-card" id="uploadOption">
+                    <h3>📤 Upload Image</h3>
+                    <div class="file-upload" id="decryptImageUpload">
+                        <div class="upload-icon">🖼️</div>
+                        <img class="image-preview" id="decryptImagePreview" alt="Preview">
+                        <div class="file-name" id="decryptImageName">Click to upload</div>
+                        <input type="file" id="decryptImage" accept=".png,.jpg,.jpeg" class="hidden">
+                    </div>
+                </div>
+
+                <div class="option-card" id="galleryOption">
+                    <h3>🖼️ Previous Encryptions</h3>
+                    <div id="decryptGallery" class="gallery-grid"></div>
+                    <div id="noGalleryMessage" style="text-align: center; padding: 1rem; color: #64748b;">
+                        No encrypted images found
+                    </div>
+                </div>
+            </div>
+
+            <div id="authSection" class="hidden">
+                <div class="auth-display" id="authDisplay">
+                    <!-- Metadata will be shown here -->
+                </div>
+                <input type="text" id="authInput" class="input-field" placeholder="Enter answer or key...">
+                <div class="progress-container" id="decryptProgress">
+                    <div class="progress-bar" id="decryptProgressBar"></div>
+                </div>
+                <button class="encrypt-btn" id="decryptBtn">🔓 Start Decryption</button>
+            </div>
+
+            <div id="decryptResult" class="hidden" style="margin-top: 2rem; padding: 1.5rem; background: #f0fdf4; border-radius: 12px;">
+                <h3 style="margin-bottom: 1rem; color: #065f46;">✅ Decryption Successful</h3>
+                <div id="textResult" class="hidden">
+                    <pre id="decryptedText" style="white-space: pre-wrap; background: white; padding: 1rem; border-radius: 8px;"></pre>
+                </div>
+                <div id="fileResult" class="hidden">
+                    <div id="decryptedFileName" style="font-weight: 600; margin-bottom: 1rem;"></div>
+                    <div style="display: flex; gap: 1rem;">
+                        <button class="btn btn-primary" id="viewFileBtn">👁️ View</button>
+                        <button class="btn btn-primary" id="downloadFileBtn">⬇️ Download</button>
+                    </div>
+                </div>
+            </div>
+
+            <div id="decryptMessage" class="message"></div>
+        </section>
+
+        <!-- Previous Encryptions -->
+        <section id="previous" class="section">
+            <div class="section-header">
+                <h2 class="section-title">🖼️ Previous Encryptions</h2>
+                <button class="btn btn-primary" id="refreshGalleryBtn">🔄 Refresh</button>
+            </div>
+            <table style="width: 100%; border-collapse: collapse;">
+                <thead>
+                    <tr style="background: #f1f5f9;">
+                        <th style="padding: 1rem; text-align: left;">Image Name</th>
+                        <th style="padding: 1rem; text-align: left;">Date</th>
+                        <th style="padding: 1rem; text-align: left;">Actions</th>
+                    </tr>
+                </thead>
+                <tbody id="uploadsTableBody">
+                    <!-- Data loaded here -->
+                </tbody>
+            </table>
+            <div id="galleryMessage" class="message"></div>
+        </section>
+
+        <!-- Plans Section -->
+        <section id="plans" class="section">
+            <div class="section-header">
+                <h2 class="section-title">💰 Upgrade Plans</h2>
+                <div class="limit-display">
+                    <span class="limit-number" id="currentLimit">0</span>
+                    <span>Current</span>
+                </div>
+            </div>
+            <div id="plansGrid" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 1.5rem; margin-top: 1.5rem;">
+                <!-- Plans loaded here -->
+            </div>
+            <div id="plansMessage" class="message"></div>
+        </section>
+
+        <section id="history" class="section">
+    <div class="section-header">
+        <h2 class="section-title">💰 Purchase History</h2>
+        <button class="btn btn-primary" id="refreshHistoryBtn">🔄 Refresh</button>
+    </div>
+    
+    <table style="width: 100%; border-collapse: collapse;">
+        <thead>
+            <tr style="background: #f1f5f9;">
+                <th style="padding: 1rem; text-align: left;">Date</th>
+                <th style="padding: 1rem; text-align: left;">Plan</th>
+                <th style="padding: 1rem; text-align: left;">Amount</th>
+                <th style="padding: 1rem; text-align: left;">Encryptions</th>
+                <th style="padding: 1rem; text-align: left;">Payment ID</th>
+                <th style="padding: 1rem; text-align: left;">Status</th>
+            </tr>
+        </thead>
+        <tbody id="paymentsTableBody">
+            <!-- Data loaded here -->
+        </tbody>
+    </table>
+    
+    <div id="noPaymentsMessage" style="text-align: center; padding: 2rem; color: #64748b;">
+        No purchase history found
+    </div>
+    
+    <div id="historyMessage" class="message"></div>
+</section>
+    </div>
+
+    <script>
+        // ===== CONFIGURATION =====
+        const backendBaseUrl = 'http://localhost:5000';
+        let currentUserId = localStorage.getItem('user_id');
+        let currentUsername = localStorage.getItem('username');
+        function isUserLoggedIn() {
+    return localStorage.getItem('user_id') && localStorage.getItem('username');
+}
+        let selectedImageFile = null;
+        let selectedPayloadFile = null;
+        let selectedDecryptImage = null;
+        let decryptFileData = null;
+
+        // ===== DOM ELEMENTS =====
+        const navLinks = document.querySelectorAll('.nav-link');
+        const sections = document.querySelectorAll('.section');
+        const userBtn = document.getElementById('userBtn');
+        const dropdownContent = document.getElementById('dropdownContent');
+        const logoutBtn = document.getElementById('logoutBtn');
+        const usernameNav = document.getElementById('usernameNav');
+        const usernameDropdown = document.getElementById('usernameDropdown');
+        const emailDropdown = document.getElementById('emailDropdown');
+        const limitDropdown = document.getElementById('limitDropdown');
+
+        // Encryption
+        const encryptLimit = document.getElementById('encryptLimit');
+        const imageUpload = document.getElementById('imageUpload');
+        const coverImageInput = document.getElementById('coverImage');
+        const imagePreview = document.getElementById('imagePreview');
+        const imageName = document.getElementById('imageName');
+        const payloadOptions = document.querySelectorAll('.payload-option');
+        const textPayload = document.getElementById('textPayload');
+        const filePayload = document.getElementById('filePayload');
+        const fileUploadDiv = document.getElementById('fileUpload');
+        const payloadFileInput = document.getElementById('payloadFile');
+        const fileName = document.getElementById('fileName');
+        const authBtns = document.querySelectorAll('.auth-btn');
+        const questionSelect = document.getElementById('questionSelect');
+        const customQuestion = document.getElementById('customQuestion');
+        const answerInput = document.getElementById('answerInput');
+        const keyInputField = document.getElementById('keyInputField');
+        const generateKeyBtn = document.getElementById('generateKeyBtn');
+        const outputName = document.getElementById('outputName');
+        const encryptBtn = document.getElementById('encryptBtn');
+        const downloadEncryptedBtn = document.getElementById('downloadEncryptedBtn');
+
+        // Decryption
+        const decryptImageUpload = document.getElementById('decryptImageUpload');
+        const decryptImageInput = document.getElementById('decryptImage');
+        const decryptImagePreview = document.getElementById('decryptImagePreview');
+        const decryptImageName = document.getElementById('decryptImageName');
+        const galleryOption = document.getElementById('galleryOption');
+        const decryptGallery = document.getElementById('decryptGallery');
+        const noGalleryMessage = document.getElementById('noGalleryMessage');
+        const authSection = document.getElementById('authSection');
+        const authDisplay = document.getElementById('authDisplay');
+        const authInput = document.getElementById('authInput');
+        const decryptBtn = document.getElementById('decryptBtn');
+        const decryptResult = document.getElementById('decryptResult');
+        const textResult = document.getElementById('textResult');
+        const decryptedText = document.getElementById('decryptedText');
+        const fileResult = document.getElementById('fileResult');
+        const decryptedFileName = document.getElementById('decryptedFileName');
+        const viewFileBtn = document.getElementById('viewFileBtn');
+        const downloadFileBtn = document.getElementById('downloadFileBtn');
+
+        // Gallery
+        const refreshGalleryBtn = document.getElementById('refreshGalleryBtn');
+        const uploadsTableBody = document.getElementById('uploadsTableBody');
+
+        // Plans
+        const currentLimit = document.getElementById('currentLimit');
+        const plansGrid = document.getElementById('plansGrid');
+
+        // Messages
+        const encryptMessage = document.getElementById('encryptMessage');
+        const decryptMessage = document.getElementById('decryptMessage');
+        const galleryMessage = document.getElementById('galleryMessage');
+        const plansMessage = document.getElementById('plansMessage');
+        
+        // Purchase History
+const historyBtn = document.getElementById('refreshHistoryBtn');
+const paymentsTableBody = document.getElementById('paymentsTableBody');
+const noPaymentsMessage = document.getElementById('noPaymentsMessage');
+const historyMessage = document.getElementById('historyMessage');
+
+
+        // ===== UTILITY FUNCTIONS =====
+        function showMessage(element, text, type) {
+            element.textContent = text;
+            element.className = `message ${type}`;
+            setTimeout(() => element.className = 'message', 5000);
+        }
+        
+        function formatSize(bytes) {
+    if (bytes === 0) return '0 Bytes';
+    const k = 1024;
+    const sizes = ['Bytes', 'KB', 'MB', 'GB'];
+    const i = Math.floor(Math.log(bytes) / Math.log(k));
+    return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i];
+}
+
+        function hideAllSections() {
+            sections.forEach(s => s.classList.remove('active'));
+            navLinks.forEach(l => l.classList.remove('active'));
+        }
+
+        function showSection(sectionId) {
+            hideAllSections();
+            document.getElementById(sectionId).classList.add('active');
+            document.querySelector(`[data-section="${sectionId}"]`).classList.add('active');
+            
+            const banner = document.querySelector('.hero-banner');
+
+            const mainContainer = document.querySelector('.main-container'); // 🔥 ADD THIS
+
+            if (sectionId === 'encrypt' || sectionId === 'decrypt') {
+                banner.style.display = 'flex';
+                mainContainer.style.marginTop = '0px';
+            } else {
+                banner.style.display = 'none';
+                mainContainer.style.marginTop = '70px';
+            }
+
+            if (sectionId === 'previous') loadGallery();
+            if (sectionId === 'decrypt') loadDecryptionGallery();
+            if (sectionId === 'plans') loadPlans();
+            if (sectionId === 'history') loadPurchaseHistory(); 
+        }
+
+
+        function checkFileSizes() {
+    const coverFile = selectedImageFile;
+    const payloadType = document.querySelector('.payload-option.selected').dataset.type;
+    
+    // Get payload size
+    let payloadSize = 0;
+    let payloadName = '';
+    
+    if (payloadType === 'message') {
+        // For text, estimate size
+        const text = textPayload.value;
+        payloadSize = new TextEncoder().encode(text).length;
+        payloadName = 'Text';
+    } else {
+        // For file
+        if (selectedPayloadFile) {
+            payloadSize = selectedPayloadFile.size;
+            payloadName = selectedPayloadFile.name;
+        } else {
+            document.getElementById('sizeWarning').innerHTML = 
+                `Please select a ${payloadType} file`;
+            document.getElementById('sizeWarning').style.background = '#f1f5f9';
+            document.getElementById('sizeWarning').style.color = '#64748b';
+            return false;
+        }
+    }
+    
+    if (!coverFile) {
+        document.getElementById('sizeWarning').innerHTML = 
+            'Please select a cover image first';
+        document.getElementById('sizeWarning').style.background = '#f1f5f9';
+        document.getElementById('sizeWarning').style.color = '#64748b';
+        return false;
+    }
+    
+    const coverSize = coverFile.size;
+    const maxAllowed = coverSize * 0.5; // 50% rule
+    const ratio = (payloadSize / coverSize) * 100;
+    
+    const sizeWarning = document.getElementById('sizeWarning');
+    
+    if (payloadSize > maxAllowed) {
+        // Too large - show error
+        sizeWarning.innerHTML = `
+            ⚠️ <strong>File Too Large!</strong><br>
+            Cover: ${formatSize(coverSize)}<br>
+            Payload: ${formatSize(payloadSize)} (${ratio.toFixed(1)}%)<br>
+            <strong>Max allowed: ${formatSize(maxAllowed)} (50% of cover)</strong><br>
+            <small>Choose a larger cover image or smaller payload</small>
+        `;
+        sizeWarning.style.background = '#fee2e2';
+        sizeWarning.style.color = '#991b1b';
+        sizeWarning.style.border = '1px solid #fecaca';
+        return false;
+    } else if (payloadSize > 0) {
+        // Within limits - show success
+        sizeWarning.innerHTML = `
+            ✅ <strong>Size OK!</strong><br>
+            Cover: ${formatSize(coverSize)}<br>
+            Payload: ${formatSize(payloadSize)} (${ratio.toFixed(1)}%)<br>
+            <small>Payload is within 50% limit</small>
+        `;
+        sizeWarning.style.background = '#d1fae5';
+        sizeWarning.style.color = '#065f46';
+        sizeWarning.style.border = '1px solid #a7f3d0';
+        return true;
+    } else {
+        // No payload yet
+        sizeWarning.innerHTML = 'Select payload to check size compatibility';
+        sizeWarning.style.background = '#f1f5f9';
+        sizeWarning.style.color = '#64748b';
+        return false;
+    }
+}
+
+        // ===== AUTH CHECK & LOAD USER DATA =====
+        async function checkAuth() {
+            if (!currentUserId || !currentUsername) {
+             /*   window.location.href = 'login.html';  */
+                return false;
+            }
+            
+            usernameNav.textContent = currentUsername;
+            usernameDropdown.textContent = currentUsername;
+            
+            // Load email and limit
+            await loadUserData();
+            return true;
+        }
+
+        async function loadUserData() {
+    try {
+        // Load limit
+        const limitResponse = await fetch(`${backendBaseUrl}/encryption-limit?user_id=${currentUserId}`);
+        const limitData = await limitResponse.json();
+        const limit = limitData.remaining_attempts || 0;
+        
+        encryptLimit.textContent = limit;
+        currentLimit.textContent = limit;
+        limitDropdown.textContent = limit;
+        
+        encryptBtn.disabled = limit <= 0;
+        encryptBtn.textContent = limit > 0 ? '🔒 Start Encryption' : '❌ Limit Exhausted';
+        
+        // FIX: Use the correct endpoint /user-email instead of /user-info
+        const emailResponse = await fetch(`${backendBaseUrl}/user-email?user_id=${currentUserId}`);
+        if (emailResponse.ok) {
+            const emailData = await emailResponse.json();
+            if (emailData.email) {
+                emailDropdown.textContent = emailData.email;
+                // Also store in localStorage for future use
+                localStorage.setItem('user_email', emailData.email);
+            } else {
+                emailDropdown.textContent = 'No email found';
+            }
+        } else {
+            // Fallback to username-based email
+            emailDropdown.textContent = currentUsername + '@stegosecure.com';
+        }
+        
+    } catch (error) {
+        console.error('Error loading user data:', error);
+        emailDropdown.textContent = 'Error loading email';
+    }
+}
+
+        // ===== ENCRYPTION =====
+        function setupEncryption() {
+            // Image upload with preview
+            imageUpload.addEventListener('click', () => {
+    if (!isUserLoggedIn()) {
+        alert("🔒 Please login to upload image");
+        window.location.href = 'login.html';
+        return;
+    }
+    coverImageInput.click();
+});
+            coverImageInput.addEventListener('change', function(e) {
+                if (e.target.files[0]) {
+                    selectedImageFile = e.target.files[0];
+                    imageName.textContent = selectedImageFile.name;
+                    
+                    // Hide emoji, show preview
+                    const uploadIcon = imageUpload.querySelector('.upload-icon');
+                    uploadIcon.style.display = 'none';
+                    
+                    const reader = new FileReader();
+                    reader.onload = function(e) {
+                        imagePreview.src = e.target.result;
+                        imagePreview.style.display = 'block';
+                    };
+                    reader.readAsDataURL(selectedImageFile);
+                    
+                    checkEncryptReady();
+                    checkFileSizes(); 
+                }
+            });
+
+            // Payload type
+            const step3Title = document.getElementById('step3Title');
+
+            payloadOptions.forEach(option => {
+                option.addEventListener('click', function() {
+                    payloadOptions.forEach(o => o.classList.remove('selected'));
+                    this.classList.add('selected');
+                    
+                    if (this.dataset.type === 'message') {
+                        textPayload.classList.remove('hidden');
+                        filePayload.classList.add('hidden');
+
+                        // 🔥 Change title
+                        step3Title.textContent = 'Enter Message to Hide';
+
+                    } else {
+                        textPayload.classList.add('hidden');
+                        filePayload.classList.remove('hidden');
+
+                        // 🔥 Change title
+                        step3Title.textContent = 'Select File to Hide';
+                    }
+
+                    checkEncryptReady();
+                });
+            });
+
+            // File upload
+            fileUploadDiv.addEventListener('click', () => payloadFileInput.click());
+            payloadFileInput.addEventListener('change', function(e) {
+                if (e.target.files[0]) {
+                    selectedPayloadFile = e.target.files[0];
+                    fileName.textContent = selectedPayloadFile.name;
+                    checkEncryptReady();
+                     checkFileSizes()
+                }
+            });
+
+            // Auth method
+            authBtns.forEach(btn => {
+                btn.addEventListener('click', function() {
+                    authBtns.forEach(b => b.classList.remove('selected'));
+                    this.classList.add('selected');
+                    
+                    if (this.dataset.type === 'qa') {
+                        document.getElementById('qaInput').classList.remove('hidden');
+                        document.getElementById('keyInput').classList.add('hidden');
+                    } else {
+                        document.getElementById('qaInput').classList.add('hidden');
+                        document.getElementById('keyInput').classList.remove('hidden');
+                    }
+                    checkEncryptReady();
+                });
+            });
+
+            // Question select
+            questionSelect.addEventListener('change', function() {
+                if (this.value === 'custom') {
+                    customQuestion.classList.remove('hidden');
+                } else {
+                    customQuestion.classList.add('hidden');
+                }
+            });
+
+            // Generate key
+            generateKeyBtn.addEventListener('click', function() {
+                const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+                let key = '';
+                for (let i = 0; i < 12; i++) {
+                    key += chars.charAt(Math.floor(Math.random() * chars.length));
+                }
+                keyInputField.value = key;
+                checkEncryptReady();
+            });
+
+            // Input validation
+            textPayload.addEventListener('input', () => {
+    checkEncryptReady();
+    checkFileSizes();
+});
+            answerInput.addEventListener('input', checkEncryptReady);
+            keyInputField.addEventListener('input', checkEncryptReady);
+
+            // Encrypt button
+            encryptBtn.addEventListener('click', startEncryption);
+        }
+
+        function checkEncryptReady() {
+            let valid = true;
+            
+            if (!selectedImageFile) valid = false;
+            
+            const selectedPayloadType = document.querySelector('.payload-option.selected').dataset.type;
+            if (selectedPayloadType === 'message') {
+                if (!textPayload.value.trim()) valid = false;
+            } else {
+                if (!selectedPayloadFile) valid = false;
+            }
+            
+            const authType = document.querySelector('.auth-btn.selected').dataset.type;
+            if (authType === 'qa') {
+                if (!answerInput.value.trim()) valid = false;
+                if (questionSelect.value === 'custom' && !customQuestion.value.trim()) valid = false;
+            } else {
+                if (!keyInputField.value.trim()) valid = false;
+            }
+            
+            // Check size condition also
+const sizeOk = checkFileSizes();
+
+// Final condition: all valid + size OK
+encryptBtn.disabled = !(valid && sizeOk);
+        }
+
+        async function startEncryption() {
+            if (!selectedImageFile) return;
+            
+            const formData = new FormData();
+            formData.append('user_id', currentUserId);
+            formData.append('image', selectedImageFile);
+            
+            const authType = document.querySelector('.auth-btn.selected').dataset.type;
+            formData.append('encryption_type', authType.toUpperCase());
+            
+            if (authType === 'qa') {
+                let question = '';
+                if (questionSelect.value === 'custom') {
+                    question = customQuestion.value;
+                } else {
+                    question = questionSelect.options[questionSelect.selectedIndex].text;
+                }
+                formData.append('question', question);
+                formData.append('answer', answerInput.value.toLowerCase());
+            } else {
+                formData.append('key', keyInputField.value);
+            }
+            
+            if (outputName.value.trim()) {
+                formData.append('output_name', outputName.value);
+            }
+            
+            const payloadType = document.querySelector('.payload-option.selected').dataset.type;
+            let endpoint;
+            if (payloadType === 'message') {
+                endpoint = '/embed-final-text';
+                formData.append('text', textPayload.value);
+            } else {
+                endpoint = '/embed-final-file';
+                formData.append('payload_type', 'FILE');
+                formData.append('payload', selectedPayloadFile);
+            }
+            
+            encryptBtn.disabled = true;
+            encryptBtn.textContent = 'Encrypting...';
+            
+            try {
+                const response = await fetch(`${backendBaseUrl}${endpoint}`, {
+                    method: 'POST',
+                    body: formData
+                });
+                
+                const result = await response.json();
+                
+                if (response.ok) {
+                    // Get the encrypted image filename
+                    const encryptedFilename = result.filename;  // 🔥 use backend response
+
+const downloadUrl = `${backendBaseUrl}/download-image/${encodeURIComponent(encryptedFilename)}`;
+downloadEncryptedBtn.href = downloadUrl;
+downloadEncryptedBtn.download = encryptedFilename;
+                    
+                    // Show result
+                    document.getElementById('encryptResult').classList.remove('hidden');
+                    showMessage(encryptMessage, '✅ Encryption successful!', 'success');
+                    
+                    // Refresh data
+                    await loadUserData();
+                    await loadGallery();
+                    await loadDecryptionGallery();
+                    
+                    // Reset form after delay
+                    setTimeout(() => {
+                        document.getElementById('encryptResult').classList.add('hidden');
+                        resetEncryptionForm();
+                    }, 5000);
+                    
+                } else {
+                    throw new Error(result.error || 'Encryption failed');
+                }
+                
+            } catch (error) {
+                showMessage(encryptMessage, error.message, 'error');
+            } finally {
+                encryptBtn.disabled = false;
+                encryptBtn.textContent = '🔒 Start Encryption';
+            }
+        }
+
+        function resetEncryptionForm() {
+            selectedImageFile = null;
+            selectedPayloadFile = null;
+            
+            // Reset image upload area - show emoji, hide preview
+            const uploadIcon = imageUpload.querySelector('.upload-icon');
+            uploadIcon.style.display = 'block';
+            imagePreview.src = '';
+            imagePreview.style.display = 'none';
+            
+            imageName.textContent = 'Click to upload PNG/JPG';
+            textPayload.value = '';
+            fileName.textContent = 'Click to upload file';
+            answerInput.value = '';
+            keyInputField.value = '';
+            outputName.value = '';
+            checkEncryptReady();
+        }
+
+        function showLoadingAnimation(type) {
+            const progress = document.getElementById(`${type}Progress`);
+            const progressBar = document.getElementById(`${type}ProgressBar`);
+            if (progress && progressBar) {
+                progress.style.display = 'block';
+                progressBar.style.width = '0%';
+                setTimeout(() => {
+                    progressBar.style.width = '100%';
+                }, 10);
+            }
+        }
+
+        function hideLoadingAnimation(type) {
+            const progress = document.getElementById(`${type}Progress`);
+            const progressBar = document.getElementById(`${type}ProgressBar`);
+            if (progress && progressBar) {
+                progressBar.style.width = '100%';
+                setTimeout(() => {
+                    progress.style.display = 'none';
+                    progressBar.style.width = '0%';
+                }, 300);
+            }
+        }
+
+        // ===== DECRYPTION =====
+        function setupDecryption() {
+            // Upload option
+            decryptImageUpload.addEventListener('click', () => {
+    if (!isUserLoggedIn()) {
+        alert("🔓 Please login to decrypt image");
+        window.location.href = 'login.html';
+        return;
+    }
+    decryptImageInput.click();
+});
+            decryptImageInput.addEventListener('change', handleDecryptUpload);
+            
+            // Gallery option
+            galleryOption.addEventListener('click', loadDecryptionGallery);
+            
+            // Decrypt button
+            decryptBtn.addEventListener('click', startDecryption);
+        }
+
+        async function handleDecryptUpload(e) {
+            if (e.target.files[0]) {
+                selectedDecryptImage = e.target.files[0];
+                decryptImageName.textContent = selectedDecryptImage.name;
+                
+                // Hide emoji, show preview
+                const uploadIcon = decryptImageUpload.querySelector('.upload-icon');
+                uploadIcon.style.display = 'none';
+                
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    decryptImagePreview.src = e.target.result;
+                    decryptImagePreview.style.display = 'block';
+                };
+                reader.readAsDataURL(selectedDecryptImage);
+                
+                // Extract metadata
+                await extractMetadata(selectedDecryptImage);
+            }
+        }
+
+        async function extractMetadata(imageFile) {
+            try {
+                // Show loading animation
+                decryptImageUpload.classList.add('loading');
+                
+                const tempFile = new File([await imageFile.arrayBuffer()], imageFile.name, {
+                    type: imageFile.type
+                });
+                
+                const formData = new FormData();
+                formData.append('image', tempFile);
+                
+                const response = await fetch(`${backendBaseUrl}/extract-text`, {
+                    method: 'POST',
+                    body: formData
+                });
+                
+                if (response.ok) {
+                    const result = await response.json();
+                    
+                    if (result.extracted_text) {
+                        try {
+                            const payload = JSON.parse(result.extracted_text);
+                            
+                            authDisplay.innerHTML = `
+                                <div style="margin-bottom: 0.5rem;">
+                                    <strong>Mode:</strong> ${payload.encryption_type || 'UNKNOWN'}
+                                </div>
+                                ${payload.encryption_type === 'QA' ? 
+                                    `<div><strong>Question:</strong> ${payload.question || 'N/A'}</div>` : 
+                                    '<div><strong>Key Authentication Required</strong></div>'
+                                }
+                                <div style="margin-top: 0.5rem; color: #64748b; font-size: 0.9rem;">
+                                    Payload Type: ${payload.payload_type || 'UNKNOWN'}
+                                </div>
+                            `;
+                            
+                            window.tempExtractedPayload = result.extracted_text;
+                            
+                            authSection.classList.remove('hidden');
+                            authInput.value = '';
+                            authInput.placeholder = (payload.encryption_type === 'QA') ? 
+                                'Enter answer...' : 'Enter decryption key...';
+                            authInput.focus();
+                            
+                        } catch (e) {
+                            authDisplay.innerHTML = `<strong>Legacy Encrypted Image</strong>`;
+                            authSection.classList.remove('hidden');
+                            authInput.placeholder = 'Enter decryption key...';
+                        }
+                    } else {
+                        throw new Error('No encrypted data found');
+                    }
+                } else {
+                    throw new Error('Failed to read image');
+                }
+                
+            } catch (error) {
+                showMessage(decryptMessage, 'This image does not contain encrypted data', 'error');
+                authSection.classList.add('hidden');
+            } finally {
+                decryptImageUpload.classList.remove('loading');
+            }
+        }
+
+        async function loadDecryptionGallery() {
+            try {
+                showLoadingAnimation('gallery');
+                
+                const response = await fetch(`${backendBaseUrl}/my-uploads?user_id=${currentUserId}`);
+                const data = await response.json();
+                
+                decryptGallery.innerHTML = '';
+                
+                if (data.uploads && data.uploads.length > 0) {
+                    noGalleryMessage.classList.add('hidden');
+                    
+                    for (const upload of data.uploads) {
+                        const filename = upload.image_path.split('\\').pop().split('/').pop();
+                        
+                        const div = document.createElement('div');
+                        div.className = 'gallery-item';
+                        div.dataset.filename = filename;
+                        div.innerHTML = `
+                            <div class="gallery-emoji">🖼️</div>
+                            <img class="gallery-preview" alt="${filename}">
+                            <div style="font-size: 0.8rem; margin-top: 0.5rem; word-break: break-all;">
+                                ${filename}
+                            </div>
+                        `;
+                        
+                        // Load preview image asynchronously
+                        (async function(div, filename) {
+                            try {
+                                const imgResponse = await fetch(`${backendBaseUrl}/download-image/${encodeURIComponent(filename)}`);
+                                if (imgResponse.ok) {
+                                    const blob = await imgResponse.blob();
+                                    const imgUrl = URL.createObjectURL(blob);
+                                    
+                                    const img = div.querySelector('.gallery-preview');
+                                    const emoji = div.querySelector('.gallery-emoji');
+                                    
+                                    img.src = imgUrl;
+                                    img.style.display = 'block';
+                                    emoji.style.display = 'none';
+                                    
+                                    img.onload = () => URL.revokeObjectURL(imgUrl);
+                                }
+                            } catch (error) {
+                                // Keep showing emoji if image fails to load
+                            }
+                        })(div, filename);
+                        
+                        div.addEventListener('click', async () => {
+                            try {
+                                decryptImageName.textContent = filename;
+                                
+                                // Hide emoji, show preview
+                                const uploadIcon = decryptImageUpload.querySelector('.upload-icon');
+                                uploadIcon.style.display = 'none';
+                                
+                                const imgResponse = await fetch(`${backendBaseUrl}/download-image/${encodeURIComponent(filename)}`);
+                                
+                                if (imgResponse.ok) {
+                                    const blob = await imgResponse.blob();
+                                    const file = new File([blob], filename, { type: blob.type });
+                                    
+                                    const reader = new FileReader();
+                                    reader.onload = function(e) {
+                                        decryptImagePreview.src = e.target.result;
+                                        decryptImagePreview.style.display = 'block';
+                                    };
+                                    reader.readAsDataURL(blob);
+                                    
+                                    selectedDecryptImage = file;
+                                    await extractMetadata(file);
+                                    
+                                } else {
+                                    showMessage(decryptMessage, 'Failed to load image from gallery', 'error');
+                                }
+                            } catch (error) {
+                                showMessage(decryptMessage, 'Error loading image: ' + error.message, 'error');
+                            }
+                        });
+                        
+                        decryptGallery.appendChild(div);
+                    }
+                } else {
+                    noGalleryMessage.classList.remove('hidden');
+                }
+                
+            } catch (error) {
+                console.error('Error loading gallery:', error);
+                showMessage(decryptMessage, 'Failed to load gallery', 'error');
+            } finally {
+                hideLoadingAnimation('gallery');
+            }
+        }
+
+        async function startDecryption() {
+            const input = authInput.value.trim();
+            if (!input || !selectedDecryptImage) {
+                showMessage(decryptMessage, 'Please enter authentication', 'error');
+                return;
+            }
+            
+            decryptBtn.disabled = true;
+            decryptBtn.textContent = 'Decrypting...';
+            showLoadingAnimation('decrypt');
+            
+            try {
+                let payloadType = 'TEXT';
+                if (window.tempExtractedPayload) {
+                    try {
+                        const parsed = JSON.parse(window.tempExtractedPayload);
+                        payloadType = parsed.payload_type || 'TEXT';
+                    } catch (e) {
+                        payloadType = 'TEXT';
+                    }
+                }
+                
+                const formData = new FormData();
+                formData.append('image', selectedDecryptImage);
+                formData.append('input', input);
+                
+                let response;
+                
+                if (payloadType === 'TEXT') {
+                    response = await fetch(`${backendBaseUrl}/extract-final-text`, {
+                        method: 'POST',
+                        body: formData
+                    });
+                    
+                    if (response.ok) {
+                        const result = await response.json();
+                        
+                        textResult.classList.remove('hidden');
+                        fileResult.classList.add('hidden');
+                        decryptedText.textContent = result.text || 'Decryption successful';
+                        decryptResult.classList.remove('hidden');
+                        
+                        showMessage(decryptMessage, '✅ Text extracted successfully!', 'success');
+                        
+                        window.tempExtractedPayload = null;
+                        
+                    } else {
+                        response = await fetch(`${backendBaseUrl}/extract-final-file`, {
+                            method: 'POST',
+                            body: formData
+                        });
+                        payloadType = 'FILE';
+                    }
+                } else {
+                    response = await fetch(`${backendBaseUrl}/extract-final-file`, {
+                        method: 'POST',
+                        body: formData
+                    });
+                }
+                
+                if (response.ok && payloadType !== 'TEXT') {
+                    const blob = await response.blob();
+                    
+                    let filename = 'decrypted_file';
+                    const contentDisposition = response.headers.get('content-disposition');
+                    
+                    if (contentDisposition && contentDisposition.includes('filename=')) {
+                        const matches = /filename[^;=\n]*=((['"]).*?\2|[^;\n]*)/.exec(contentDisposition);
+                        if (matches != null && matches[1]) {
+                            filename = matches[1].replace(/['"]/g, '');
+                        }
+                    }
+                    
+                    if (filename === 'decrypted_file' && window.tempExtractedPayload) {
+                        try {
+                            const parsed = JSON.parse(window.tempExtractedPayload);
+                            if (parsed.filename) {
+                                filename = parsed.filename;
+                            }
+                        } catch (e) {
+                            // Ignore
+                        }
+                    }
+                    
+                    const fileUrl = URL.createObjectURL(blob);
+                    
+                    textResult.classList.add('hidden');
+                    fileResult.classList.remove('hidden');
+                    decryptedFileName.textContent = `File: ${filename}`;
+                    
+                    viewFileBtn.onclick = function() {
+    // Check file type from filename
+    const fileExtension = filename.split('.').pop().toLowerCase();
+    const viewableExtensions = ['txt', 'pdf', 'png', 'jpg', 'jpeg', 'gif', 'bmp', 'webp', 'html', 'htm', 'xml', 'json'];
+    const imageExtensions = ['png', 'jpg', 'jpeg', 'gif', 'bmp', 'webp'];
+    
+    if (imageExtensions.includes(fileExtension)) {
+        // For images, open in new tab
+        window.open(fileUrl, '_blank');
+    } else if (viewableExtensions.includes(fileExtension)) {
+        // For other viewable files, create a blob URL and open
+        window.open(fileUrl, '_blank');
+    } else {
+        // For non-viewable files, trigger download
+        const a = document.createElement('a');
+        a.href = fileUrl;
+        a.download = filename;
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
+        alert(`This file type (.${fileExtension}) cannot be viewed in browser. It has been downloaded.`);
+    }
+};
+                    
+                    downloadFileBtn.onclick = function() {
+                        const a = document.createElement('a');
+                        a.href = fileUrl;
+                        a.download = filename;
+                        a.click();
+                    };
+                    
+                    decryptResult.classList.remove('hidden');
+                    showMessage(decryptMessage, '✅ File extracted successfully!', 'success');
+                    
+                    window.tempExtractedPayload = null;
+                    
+                } else if (!response.ok) {
+                    const errorData = await response.json();
+                    throw new Error(errorData.error || 'Authentication failed');
+                }
+                
+            } catch (error) {
+                showMessage(decryptMessage, error.message, 'error');
+            } finally {
+                decryptBtn.disabled = false;
+                decryptBtn.textContent = '🔓 Start Decryption';
+                hideLoadingAnimation('decrypt');
+            }
+        }
+
+        // ===== GALLERY (Previous Encryptions Section) =====
+        async function loadGallery() {
+            try {
+                const response = await fetch(`${backendBaseUrl}/my-uploads?user_id=${currentUserId}`);
+                const data = await response.json();
+                
+                uploadsTableBody.innerHTML = '';
+                
+                if (data.uploads && data.uploads.length > 0) {
+                    data.uploads.forEach(upload => {
+                        const filename = upload.image_path.split('\\').pop().split('/').pop();
+                        const date = new Date(upload.uploaded_at).toLocaleDateString();
+                        
+                        const row = document.createElement('tr');
+                        row.innerHTML = `
+    <td style="padding: 1rem;">
+        <div style="display: flex; align-items: center; gap: 10px;">
+            <div style="width: 50px; height: 50px; display: flex; align-items: center; justify-content: center; background: #f1f5f9; border-radius: 6px;">
+                <div class="table-emoji">🖼️</div>
+                <img class="table-preview" style="max-width: 100%; max-height: 100%; border-radius: 4px;" alt="${filename}">
+            </div>
+            <span>${filename}</span>
+        </div>
+    </td>
+    <td style="padding: 1rem;">${date}</td>
+    <td style="padding: 1rem;">
+        <button class="btn btn-primary" onclick="decryptFromGallery('${filename}')" style="margin-right: 0.5rem;">Decrypt</button>
+        <button class="btn" onclick="downloadFromGallery('${filename}')" style="background: #10b981; color: white; margin-right: 0.5rem;">⬇️ Download</button>
+        <button class="btn" style="background: #ef4444; color: white;" onclick="deleteUpload(${upload.id}, '${filename}')">Delete</button>
+    </td>
+`;
+                        uploadsTableBody.appendChild(row);
+
+                        // Load image preview for table
+                        (async function(row, filename) {
+                            try {
+                                const imgResponse = await fetch(`${backendBaseUrl}/download-image/${encodeURIComponent(filename)}`);
+                                if (imgResponse.ok) {
+                                    const blob = await imgResponse.blob();
+                                    const imgUrl = URL.createObjectURL(blob);
+                                    
+                                    const img = row.querySelector('.table-preview');
+                                    const emoji = row.querySelector('.table-emoji');
+                                    
+                                    img.src = imgUrl;
+                                    img.style.display = 'block';
+                                    emoji.style.display = 'none';
+                                    
+                                    img.onload = () => URL.revokeObjectURL(imgUrl);
+                                }
+                            } catch (error) {
+                                // Keep showing emoji if image fails to load
+                            }
+                        })(row, filename);
+                    });
+                } else {
+                    uploadsTableBody.innerHTML = `
+                        <tr>
+                            <td colspan="3" style="padding: 2rem; text-align: center; color: #64748b;">
+                                No previous encryptions found
+                            </td>
+                        </tr>
+                    `;
+                }
+                
+            } catch (error) {
+                console.error('Error loading gallery:', error);
+                showMessage(galleryMessage, 'Failed to load previous encryptions', 'error');
+            }
+        }
+
+        // ===== PLANS =====
+        async function loadPlans() {
+            try {
+                const response = await fetch(`${backendBaseUrl}/plans`);
+                const data = await response.json();
+                
+                plansGrid.innerHTML = '';
+                
+                data.plans.forEach(plan => {
+                    const div = document.createElement('div');
+                    div.className = 'encryption-step';
+                    div.innerHTML = `
+                        <h3 class="step-title">${plan.name}</h3>
+                        <div style="font-size: 2rem; font-weight: 700; color: #4f46e5; margin: 1rem 0;">₹${plan.price}</div>
+                        <div style="color: #64748b; margin-bottom: 1rem;">${plan.encryptions} encryptions</div>
+                        <button class="encrypt-btn" onclick="startPayment(${plan.id}, ${plan.price}, ${plan.encryptions})">
+                            Buy Now
+                        </button>
+                    `;
+                    plansGrid.appendChild(div);
+                });
+                
+            } catch (error) {
+                console.error('Error loading plans:', error);
+            }
+        }
+
+        // ===== PURCHASE HISTORY =====
+async function loadPurchaseHistory() {
+    try {
+        const response = await fetch(`${backendBaseUrl}/user/payments?user_id=${currentUserId}`);
+        const data = await response.json();
+        
+        paymentsTableBody.innerHTML = '';
+        
+        if (data.payments && data.payments.length > 0) {
+            noPaymentsMessage.style.display = 'none';
+            
+            data.payments.forEach(payment => {
+                const row = document.createElement('tr');
+                row.innerHTML = `
+                    <td style="padding: 1rem;">${payment.created_at || 'N/A'}</td>
+                    <td style="padding: 1rem;">${payment.plan_name || 'Unknown'}</td>
+                    <td style="padding: 1rem;">₹${payment.amount || 0}</td>
+                    <td style="padding: 1rem;">${payment.encryptions || 0}</td>
+                    <td style="padding: 1rem;">
+                        <div style="font-family: monospace; font-size: 0.8rem; color: #4b5563;">
+                           <b> ${payment.payment_id || 'N/A'}<b>
+                        </div>
+                    </td>
+                    <td style="padding: 1rem;">
+                        <span style="
+                            background: ${payment.status === 'SUCCESS' ? '#d1fae5' : '#fee2e2'}; 
+                            color: ${payment.status === 'SUCCESS' ? '#065f46' : '#991b1b'}; 
+                            padding: 0.25rem 0.75rem; 
+                            border-radius: 20px; 
+                            font-size: 0.85rem;
+                        ">
+                            ${payment.status || 'PENDING'}
+                        </span>
+                    </td>
+                `;
+                paymentsTableBody.appendChild(row);
+            });
+        } else {
+            noPaymentsMessage.style.display = 'block';
+        }
+        
+    } catch (error) {
+        console.error('Error loading purchase history:', error);
+        showMessage(historyMessage, 'Failed to load purchase history', 'error');
+    }
+}
+
+        window.decryptFromGallery = async function(filename) {
+            showSection('decrypt');
+            decryptImageName.textContent = filename;
+            
+            try {
+                const response = await fetch(`${backendBaseUrl}/download-image/${encodeURIComponent(filename)}`);
+                
+                if (response.ok) {
+                    const blob = await response.blob();
+                    const file = new File([blob], filename, { type: blob.type });
+                    selectedDecryptImage = file;
+                    
+                    // Hide emoji, show preview
+                    const uploadIcon = decryptImageUpload.querySelector('.upload-icon');
+                    uploadIcon.style.display = 'none';
+                    
+                    const reader = new FileReader();
+                    reader.onload = function(e) {
+                        decryptImagePreview.src = e.target.result;
+                        decryptImagePreview.style.display = 'block';
+                    };
+                    reader.readAsDataURL(blob);
+                    
+                    await extractMetadata(file);
+                    
+                    authSection.scrollIntoView({ behavior: 'smooth' });
+                    
+                } else {
+                    showMessage(decryptMessage, 'Failed to load image from gallery', 'error');
+                }
+            } catch (error) {
+                showMessage(decryptMessage, 'Failed to load image: ' + error.message, 'error');
+            }
+        };
+
+        window.deleteUpload = async function(uploadId, filename) {
+            if (!confirm('Are you sure you want to delete this encrypted image?')) return;
+            
+            try {
+                const response = await fetch(`${backendBaseUrl}/delete-upload`, {
+                    method: 'POST',
+                    headers: {'Content-Type': 'application/json'},
+                    body: JSON.stringify({
+                        user_id: currentUserId,
+                        upload_id: uploadId,
+                        filename: filename
+                    })
+                });
+                
+                if (response.ok) {
+                    showMessage(galleryMessage, '✅ Image deleted successfully', 'success');
+                    loadGallery();
+                    loadDecryptionGallery();
+                } else {
+                    const errorData = await response.json();
+                    throw new Error(errorData.error || 'Delete failed');
+                }
+            } catch (error) {
+                showMessage(galleryMessage, error.message, 'error');
+            }
+        };
+
+        window.downloadFromGallery = async function(filename) {
+    try {
+        // Create download link
+        const downloadUrl = `${backendBaseUrl}/download-image/${encodeURIComponent(filename)}`;
+        
+        // Create an invisible link and click it
+        const a = document.createElement('a');
+        a.href = downloadUrl;
+        a.download = filename;
+        a.style.display = 'none';
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
+        
+        // Optional: Show a success message
+        showMessage(galleryMessage, `✅ Downloading ${filename}`, 'success');
+        
+    } catch (error) {
+        showMessage(galleryMessage, 'Failed to download: ' + error.message, 'error');
+    }
+};
+
+        window.startPayment = async function(planId, price, encryptions) {
+            try {
+                const orderResponse = await fetch(`${backendBaseUrl}/create-order`, {
+                    method: 'POST',
+                    headers: {'Content-Type': 'application/json'},
+                    body: JSON.stringify({
+                        user_id: parseInt(currentUserId),
+                        plan_id: planId
+                    })
+                });
+                
+                const orderData = await orderResponse.json();
+                
+                if (!orderResponse.ok) throw new Error(orderData.error);
+                
+                const options = {
+                    key: "rzp_test_S6WscdakdcZUgs",
+                    amount: orderData.amount * 100,
+                    currency: "INR",
+                    name: "StegoSecure",
+                    description: `Purchase ${encryptions} encryptions`,
+                    order_id: orderData.order_id,
+                    handler: async function(response) {
+                        const verifyResponse = await fetch(`${backendBaseUrl}/verify-payment`, {
+                            method: 'POST',
+                            headers: {'Content-Type': 'application/json'},
+                            body: JSON.stringify({
+                                user_id: parseInt(currentUserId),
+                                plan_id: planId,
+                                order_id: response.razorpay_order_id,
+                                payment_id: response.razorpay_payment_id,
+                                signature: response.razorpay_signature
+                            })
+                        });
+                        
+                        const verifyData = await verifyResponse.json();
+                        
+                        if (verifyResponse.ok) {
+                            showMessage(plansMessage, `✅ Added ${verifyData.added_encryptions} encryptions!`, 'success');
+                            loadUserData();
+                        } else {
+                            showMessage(plansMessage, verifyData.error, 'error');
+                        }
+                    },
+                    prefill: {
+                        name: currentUsername,
+                        email: emailDropdown.textContent
+                    },
+                    theme: {
+                        color: "#4f46e5"
+                    }
+                };
+                
+                const rzp = new Razorpay(options);
+                rzp.open();
+                
+            } catch (error) {
+                showMessage(plansMessage, error.message, 'error');
+            }
+        };
+        // ===== INITIALIZATION =====
+        document.addEventListener('DOMContentLoaded', function() {
+            checkAuth(); // just call it, don’t block execution
+            // Load Razorpay script
+            const script = document.createElement('script');
+            script.src = 'https://checkout.razorpay.com/v1/checkout.js';
+            document.head.appendChild(script);
+            
+            // Setup event listeners
+            setupEncryption();
+            setupDecryption();
+            
+            navLinks.forEach(link => {
+                link.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    showSection(this.dataset.section);
+                });
+            });
+            
+            userBtn.addEventListener('click', function() {
+                dropdownContent.classList.toggle('show');
+            });
+            
+            logoutBtn.addEventListener('click', function() {
+                localStorage.clear();
+                window.location.href = 'login.html';
+            });
+            
+            refreshGalleryBtn.addEventListener('click', loadGallery);
+            historyBtn.addEventListener('click', loadPurchaseHistory);
+            
+            // Close dropdown when clicking outside
+            document.addEventListener('click', function(e) {
+                if (!e.target.closest('.user-dropdown')) {
+                    dropdownContent.classList.remove('show');
+                }
+            });
+            
+            // Start with encryption section
+            showSection('encrypt');
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,193 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>User Dashboard | Stego Secure</title>
+  <style>
+    body { margin:0; font-family:Arial,sans-serif; background:#0f172a; color:#e5e7eb; }
+    header { background:#020617; padding:14px 20px; display:flex; justify-content:space-between; align-items:center; }
+    header h1 { font-size:18px; margin:0; }
+    nav button { margin-left:6px; padding:8px 12px; background:#1e293b; border:none; color:#e5e7eb; border-radius:6px; cursor:pointer; }
+    nav button:hover { background:#334155; }
+    .logout { background:#ef4444 !important; }
+    .section { display:none; padding:20px; }
+    .active { display:block; }
+    .card { background:#020617; padding:20px; border-radius:10px; max-width:900px; margin:auto; }
+    h2 { margin-top:0; }
+    .row { margin-bottom:14px; }
+    label { display:block; margin-bottom:6px; }
+    input, textarea, select { width:100%; padding:10px; border-radius:6px; border:none; }
+    button.primary { margin-top:12px; padding:10px 16px; background:#22c55e; border:none; border-radius:6px; font-weight:bold; cursor:pointer; }
+    button.primary:hover { background:#16a34a; }
+    table { width:100%; border-collapse:collapse; }
+    th,td { padding:8px; border-bottom:1px solid #334155; text-align:left; }
+    .info { font-size:14px; margin-top:10px; }
+  </style>
+</head>
+<body>
+
+<header>
+  <h1>Stego Secure — User Dashboard</h1>
+  <nav>
+    <button onclick="showSection('profile')">Profile</button>
+    <button onclick="showSection('encrypt')">Encrypt</button>
+    <button onclick="showSection('decrypt')">Decrypt</button>
+    <button onclick="showSection('gallery')">Gallery</button>
+    <button onclick="showSection('plans')">Plans</button>
+    <button class="logout" onclick="logout()">Logout</button>
+  </nav>
+</header>
+
+<section id="profile" class="section active">
+  <div class="card">
+    <h2>Profile & Limits</h2>
+    <p><b>Username:</b> <span id="username"></span></p>
+    <p><b>Remaining Encryptions:</b> <span id="limit">--</span></p>
+    <button class="primary" onclick="loadLimit()">Refresh</button>
+  </div>
+</section>
+
+<section id="encrypt" class="section">
+  <div class="card">
+    <h2>Encryption</h2>
+
+    <div class="row"><label>Cover Image</label><input type="file" id="encImage"></div>
+
+    <div class="row"><label>Payload Type</label>
+      <select id="payloadType" onchange="togglePayload()">
+        <option value="TEXT">Text</option>
+        <option value="IMAGE">Image</option>
+        <option value="PDF">PDF</option>
+        <option value="DOC">DOC / DOCX</option>
+        <option value="ZIP">ZIP</option>
+      </select>
+    </div>
+
+    <div class="row" id="textRow"><label>Text Payload</label><textarea id="textPayload"></textarea></div>
+    <div class="row" id="fileRow" style="display:none"><label>File Payload</label><input type="file" id="filePayload"></div>
+
+    <div class="row"><label>Authentication Type</label>
+      <select id="authType" onchange="toggleAuth()">
+        <option value="QA">Question–Answer</option>
+        <option value="KEY">Key</option>
+      </select>
+    </div>
+
+    <div id="qaBlock">
+      <div class="row"><label>Question</label>
+        <select id="qaQuestion" onchange="toggleCustom()">
+          <option value="What is your favorite color?">What is your favorite color?</option>
+          <option value="What is your birth city?">What is your birth city?</option>
+          <option value="What is your childhood nickname?">What is your childhood nickname?</option>
+          <option value="CUSTOM">Custom question</option>
+        </select>
+      </div>
+      <div class="row" id="customRow" style="display:none"><label>Custom Question</label><input id="customQuestion"></div>
+      <div class="row"><label>Answer</label><input id="qaAnswer"></div>
+    </div>
+
+    <div id="keyBlock" style="display:none">
+      <div class="row"><label>Key</label><input id="keyInput"></div>
+    </div>
+
+    <div class="row"><label>Output Image Name (optional)</label><input id="outputName"></div>
+
+    <button class="primary" onclick="encryptNow()">Encrypt</button>
+    <p class="info" id="encStatus"></p>
+  </div>
+</section>
+
+<section id="decrypt" class="section">
+  <div class="card">
+    <h2>Decryption</h2>
+    <div class="row"><label>Select Encrypted Image</label><input type="file" id="decImage"></div>
+    <div id="decAuth"></div>
+    <button class="primary" onclick="decryptNow()">Decrypt</button>
+    <div class="info" id="decResult"></div>
+  </div>
+</section>
+
+<section id="gallery" class="section">
+  <div class="card">
+    <h2>Previous Uploads</h2>
+    <table id="galleryTable"></table>
+  </div>
+</section>
+
+<section id="plans" class="section">
+  <div class="card">
+    <h2>Plans</h2>
+    <div id="plansBox"></div>
+  </div>
+</section>
+
+<script>
+const userId = localStorage.getItem('user_id');
+const username = localStorage.getItem('username');
+if(!userId||!username) location.href='login.html';
+document.getElementById('username').innerText=username;
+
+function showSection(id){document.querySelectorAll('.section').forEach(s=>s.classList.remove('active'));document.getElementById(id).classList.add('active');if(id==='gallery')loadGallery();if(id==='plans')loadPlans();}
+function logout(){localStorage.clear();location.href='login.html';}
+
+async function loadLimit(){const r=await fetch(`http://127.0.0.1:5000/encryption-limit?user_id=${userId}`);const d=await r.json();document.getElementById('limit').innerText=d.remaining_attempts;}
+loadLimit();
+
+function togglePayload(){const t=payloadType.value;textRow.style.display=t==='TEXT'?'block':'none';fileRow.style.display=t==='TEXT'?'none':'block';}
+function toggleAuth(){qaBlock.style.display=authType.value==='QA'?'block':'none';keyBlock.style.display=authType.value==='KEY'?'block':'none';}
+function toggleCustom(){customRow.style.display=qaQuestion.value==='CUSTOM'?'block':'none';}
+
+async function encryptNow(){
+  encStatus.innerText='Encrypting...';
+  const form=new FormData();
+  form.append('user_id',userId);
+  form.append('image',encImage.files[0]);
+  form.append('output_name',outputName.value);
+  form.append('encryption_type',authType.value);
+
+  let url;
+  if(payloadType.value==='TEXT'){
+    url='http://127.0.0.1:5000/embed-final-text';
+    form.append('text',textPayload.value);
+  } else {
+    url='http://127.0.0.1:5000/embed-final-file';
+    form.append('payload',filePayload.files[0]);
+    form.append('payload_type',payloadType.value);
+  }
+
+  if(authType.value==='QA'){
+    const q=qaQuestion.value==='CUSTOM'?customQuestion.value:qaQuestion.value;
+    form.append('question',q);
+    form.append('answer',qaAnswer.value);
+  } else {
+    form.append('key',keyInput.value);
+  }
+
+  const r=await fetch(url,{method:'POST',body:form});
+  const d=await r.json();
+  encStatus.innerText=d.message||'Error';
+  loadLimit();
+}
+
+async function decryptNow(){
+  const f=new FormData();
+  f.append('image',decImage.files[0]);
+  const input=document.querySelector('#decAuth input')?.value||'';
+  f.append('input',input);
+  const r=await fetch('http://127.0.0.1:5000/extract-final-file',{method:'POST',body:f});
+  if(r.headers.get('content-type')?.includes('application/json')){
+    const d=await r.json();decResult.innerText=d.text||d.error;
+  } else {
+    const blob=await r.blob();
+    const url=URL.createObjectURL(blob);
+    decResult.innerHTML=`<a href="${url}" target="_blank">View</a> | <a href="${url}" download>Download</a>`;
+  }
+}
+
+async function loadGallery(){const r=await fetch(`http://127.0.0.1:5000/my-uploads?user_id=${userId}`);const d=await r.json();let html='<tr><th>Image</th><th>Date</th><th>Action</th></tr>';d.uploads.forEach(u=>{html+=`<tr><td>${u.image_path}</td><td>${u.uploaded_at}</td><td><button onclick="deleteUpload(${u.id})">Delete</button></td></tr>`});galleryTable.innerHTML=html;}
+async function deleteUpload(id){await fetch('http://127.0.0.1:5000/delete-upload',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({user_id:userId,upload_id:id})});loadGallery();}
+
+async function loadPlans(){const r=await fetch('http://127.0.0.1:5000/plans');const d=await r.json();plansBox.innerHTML='';d.plans.forEach(p=>{plansBox.innerHTML+=`<p>${p.name} - ₹${p.price} (${p.encryptions})</p>`});}
+</script>
+</body>
+</html>

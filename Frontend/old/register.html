@@ -1,0 +1,322 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Register - StegoSecure</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        body {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+
+        .container {
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            width: 100%;
+            max-width: 450px;
+            overflow: hidden;
+        }
+
+        .header {
+            background: linear-gradient(to right, #4f6df5, #3a56d5);
+            color: white;
+            padding: 30px;
+            text-align: center;
+        }
+
+        .header h1 {
+            font-size: 28px;
+            margin-bottom: 10px;
+            font-weight: 600;
+        }
+
+        .header p {
+            opacity: 0.9;
+            font-size: 14px;
+        }
+
+        .form-container {
+            padding: 30px;
+        }
+
+        .form-group {
+            margin-bottom: 25px;
+            position: relative;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            color: #333;
+            font-weight: 500;
+            font-size: 14px;
+        }
+
+        .form-control {
+            width: 100%;
+            padding: 14px;
+            border: 2px solid #e1e5ee;
+            border-radius: 10px;
+            font-size: 16px;
+            transition: all 0.3s;
+            background: #f8f9fa;
+        }
+
+        .form-control:focus {
+            outline: none;
+            border-color: #4f6df5;
+            background: white;
+            box-shadow: 0 0 0 3px rgba(79, 109, 245, 0.1);
+        }
+
+        .btn {
+            width: 100%;
+            padding: 16px;
+            background: linear-gradient(to right, #4f6df5, #3a56d5);
+            color: white;
+            border: none;
+            border-radius: 10px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .btn:hover {
+            background: linear-gradient(to right, #3a56d5, #2a46c5);
+            transform: translateY(-2px);
+            box-shadow: 0 10px 20px rgba(79, 109, 245, 0.3);
+        }
+
+        .btn:active {
+            transform: translateY(0);
+        }
+
+        .message {
+            margin-top: 20px;
+            padding: 12px;
+            border-radius: 8px;
+            text-align: center;
+            font-size: 14px;
+            display: none;
+        }
+
+        .success {
+            background: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+            display: block;
+        }
+
+        .error {
+            background: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+            display: block;
+        }
+
+        .login-link {
+            text-align: center;
+            margin-top: 25px;
+            color: #666;
+            font-size: 14px;
+        }
+
+        .login-link a {
+            color: #4f6df5;
+            text-decoration: none;
+            font-weight: 600;
+            transition: color 0.3s;
+        }
+
+        .login-link a:hover {
+            color: #3a56d5;
+            text-decoration: underline;
+        }
+
+        .loader {
+            display: none;
+            text-align: center;
+            margin: 10px 0;
+        }
+
+        .loader::after {
+            content: '';
+            display: inline-block;
+            width: 20px;
+            height: 20px;
+            border: 3px solid #f3f3f3;
+            border-top: 3px solid #4f6df5;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        @media (max-width: 480px) {
+            .container {
+                border-radius: 15px;
+            }
+            
+            .header {
+                padding: 25px 20px;
+            }
+            
+            .form-container {
+                padding: 25px 20px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🔐 Create Account</h1>
+            <p>Join StegoSecure - Hide your secrets securely</p>
+        </div>
+
+        <div class="form-container">
+            <form id="registerForm">
+                <div class="form-group">
+                    <label for="username">Username</label>
+                    <input type="text" id="username" class="form-control" placeholder="Enter your username" required>
+                </div>
+
+                <div class="form-group">
+                    <label for="email">Email</label>
+                    <input type="email" id="email" class="form-control" placeholder="Enter your email" required>
+                </div>
+
+                <div class="form-group">
+                    <label for="password">Password</label>
+                    <input type="password" id="password" class="form-control" placeholder="Create a strong password" required>
+                </div>
+
+                <div class="loader" id="loading"></div>
+
+                <div class="message" id="message"></div>
+
+                <button type="submit" class="btn" id="registerBtn">Register Now</button>
+            </form>
+
+            <div class="login-link">
+                Already have an account? <a href="login.html">Login here</a>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        document.getElementById('registerForm').addEventListener('submit', async function(e) {
+            e.preventDefault();
+            
+            const username = document.getElementById('username').value.trim();
+            const email = document.getElementById('email').value.trim();
+            const password = document.getElementById('password').value;
+            const messageEl = document.getElementById('message');
+            const loadingEl = document.getElementById('loading');
+            const registerBtn = document.getElementById('registerBtn');
+            
+            // Clear previous messages
+            messageEl.className = 'message';
+            messageEl.style.display = 'none';
+            messageEl.textContent = '';
+            
+            // Validation
+            if (!username || !email || !password) {
+                showError('Please fill in all fields');
+                return;
+            }
+            
+            if (password.length < 6) {
+                showError('Password must be at least 6 characters');
+                return;
+            }
+            
+            // Show loading
+            loadingEl.style.display = 'block';
+            registerBtn.disabled = true;
+            registerBtn.textContent = 'Registering...';
+            
+            try {
+                const response = await fetch('http://localhost:5000/register', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        username: username,
+                        email: email,
+                        password: password
+                    })
+                });
+                
+                const data = await response.json();
+                
+                if (data.success) {
+                    showSuccess('Registration successful! Redirecting to login...');
+                    
+                    // Clear form
+                    document.getElementById('registerForm').reset();
+                    
+                    // Redirect to login after 2 seconds
+                    setTimeout(() => {
+                        window.location.href = 'login.html';
+                    }, 2000);
+                } else {
+                    showError('Registration failed. Username or email may already exist.');
+                }
+            } catch (error) {
+                console.error('Error:', error);
+                showError('Network error. Please check if backend is running.');
+            } finally {
+                // Hide loading
+                loadingEl.style.display = 'none';
+                registerBtn.disabled = false;
+                registerBtn.textContent = 'Register Now';
+            }
+        });
+        
+        function showSuccess(message) {
+            const messageEl = document.getElementById('message');
+            messageEl.textContent = message;
+            messageEl.className = 'message success';
+            messageEl.style.display = 'block';
+        }
+        
+        function showError(message) {
+            const messageEl = document.getElementById('message');
+            messageEl.textContent = message;
+            messageEl.className = 'message error';
+            messageEl.style.display = 'block';
+        }
+        
+        // Check if backend is reachable
+        window.addEventListener('load', async () => {
+            try {
+                await fetch('http://localhost:5000/');
+                console.log('Backend is reachable');
+            } catch (error) {
+                showError('⚠️ Backend server not running. Please start the Flask server first.');
+            }
+        });
+    </script>
+</body>
+</html>
